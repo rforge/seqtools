@@ -7,7 +7,7 @@ Counts K-mers for reverse complement of given DNA sequence. The k-mers are searc
 revCountDnaKmers(dna,k,start,width)
 }
 \arguments{
-  \item{dna}{\code{character}. Vector of DNA sequences (must not contain other characters as "ATCG". Capitalization does not matter.)}
+  \item{dna}{\code{character}. Vector of DNA sequences (must not contain other characters as "ATCGN". Capitalization does not matter. If any "N"-entry is found during analysis for a DNA k-mer, the k-mer is omitted from counting.)}
   \item{k}{\code{numeric}. Number of nucleotides in tabled DNA motifs.}
   \item{start}{\code{numeric}. Vector of (1-based) start positions for reading frames. Reading frame is counted to the left side of the DNA string.}
   \item{width}{\code{numeric}. Vector of frame width values}

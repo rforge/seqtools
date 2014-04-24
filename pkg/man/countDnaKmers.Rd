@@ -7,7 +7,7 @@ Counts occurrence of k-mers in given DNA sequence. The k-mers are searched in a 
 countDnaKmers(dna,k,start,width)
 }
 \arguments{
-  \item{dna}{\code{character}. Single DNA sequence (vector of length 1). \code{dna} must not contain other characters as "ATCG". Capitalization does not matter.}
+  \item{dna}{\code{character}. Single DNA sequence (vector of length 1). \code{dna} must not contain other characters as "ATCGN". Capitalization does not matter. If any "N"-entry is found during analysis for a DNA k-mer, the k-mer is omitted from counting.}
   \item{k}{\code{numeric}. Number of nucleotides in tabled DNA motifs.}
   \item{start}{\code{numeric}. Vector of (1-based) start positions for reading frames.}
   \item{width}{\code{numeric}. Vector of frame width values. When \code{width} has length 1, the value is recycled.}

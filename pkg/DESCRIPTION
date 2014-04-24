@@ -2,7 +2,7 @@ Package: seqTools
 Type: Package
 Title: Analysis of nucleotide, sequence and quality content on fastq
         files.
-Version: 0.99.23
+Version: 0.99.24
 Date: 2013-10-14
 Author: Wolfgang Kaisers
 Maintainer: Wolfgang Kaisers <kaisers@med.uni-duesseldorf.de>
@@ -11,4 +11,4 @@ biocViews: QualityControl,Sequencing
 License: Artistic-2.0
 Depends: methods,utils
 Suggests: RUnit, BiocGenerics
-Packaged: 2014-04-15 20:06:23 UTC; wolfgang
+Packaged: 2014-04-16 08:09:15 UTC; kaisers

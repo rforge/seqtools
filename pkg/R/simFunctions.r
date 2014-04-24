@@ -327,6 +327,7 @@ sim_fq<-function(nRep = 2, nContamVec = c(100,1000), grSize = 20, nSeq = 1e4,
       ## + + + + + + + + + + + + + + + + + + + + + + + + + + + + ##
       res$nContam[m] <- nContam
       res$rep[m] <- j
+      
       # Calculate how many labels of the contamination group
       # are in the first half of leaf labels
       res$sum[m] <- sum(hc$order[ctrl_vec] > grSize)
