@@ -4,7 +4,7 @@
 fastqq function: Reading summarizing information from fastq files.
 }
 \description{
-Reads read numbers, read lengths, counts per position alphabet frequencies, phred scores and counts per file DNA k-mers.
+Reads read numbers, read lengths, counts per position alphabet frequencies, phred scores and counts per file DNA k-mers from (possibly compressed) fastq files.
 }
 \usage{
 fastqq(filenames,k=6,probeLabel)
