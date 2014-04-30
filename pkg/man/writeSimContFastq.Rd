@@ -17,6 +17,11 @@ writeSimContFastq(k=6,nk=5,nSeq=10,pos=1,kIndex=1,nContam=nSeq,filename="simc.fq
 }
 \details{The read headers are consequtive numbered. The phred quality values are equally set to 46 (='.') which represents a phred value of 13. This function is not designed for routine use. The random content fastq files can be used in order to measure the separation capabilities of hierarchical clustering mechanisms.}
 \value{None.}
+\references{
+Cock PJA, Fields CJ, Goto N, Heuer ML, Rice PM
+The sanger fastq file format for sequences with quality scores and the Solexa/Illumina fastq variants.
+Nucleic Acids Research 2010 Vol.38 No.6 1767-1771
+}
 \author{Wolfgang Kaisers}
 \examples{
 writeSimContFastq()

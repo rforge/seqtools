@@ -1,15 +1,16 @@
 \name{trimFastq}
 \alias{trimFastq}
-\title{trimFastq: Performs removing sequences, fixed and quality base trimming and nucleotide masking on fastq files.}
+\title{trimFastq: Performs sequence removal, trimming (fixed and quality based) and nucleotide masking on fastq files.}
 \description{
-Writes compressed fastq files where sequence sections contain concatenated k-mers which are uniformly distributed in the range of k-mers for given k. A fraction of the reads can be contaminated with one or more deterministic k-mers.}
+Fastq files sometimes need to be preprocessed before alignment. Three different mechanisms come into use here: Discarding whole reads, trimming sequences and masking nucleotides. This function performs all three mechanisms together in one step. All reads with insufficient phred are discarded. The reads can be trimmed ad each terminal side (on trim of fixed size and a trim based on quality thresholds).
+}
 \usage{
 trimFastq(infile,outfile="keep.fq.gz",discard="disc.fq.gz",qualDiscard=0,qualMask=0,
                     fixTrimLeft=0,fixTrimRight=0,qualTrimLeft=0,qualTrimRight=0,
                     qualMaskValue=78,minSeqLen=0)
 }
 \arguments{
-  \item{infile}{\code{character}. Input fastq file.}
+  \item{infile}{\code{character}. Input fastq file. Only one infile is allowed per function call. }
   \item{outfile}{\code{character}. Output fastq file.}
   \item{discard}{\code{character}. Output file in which discarded reads are written.}
   \item{qualDiscard}{\code{numeric}. All reads which contain one or more phred scores <qualDiscard will be discarded (i.e. output to discard).}
@@ -21,8 +22,13 @@ trimFastq(infile,outfile="keep.fq.gz",discard="disc.fq.gz",qualDiscard=0,qualMas
   \item{qualTrimRight}{\code{numeric}. Suffix where all phred scores are < qualTrimRight will be trimmed.}
   \item{minSeqLen}{\code{numeric}. All reads where sequence length after (fixed and quality based) trimming is <minSeqLen will be descarded (i.e. output to discard).}
 }
-\details{After trim operations, the function checks for remaining read length. When read length is smaller than minSeqLen, the read will be discarded (i.e. the read will be written to the discard file).}
+\details{The function divides the input file into two outputs: The output file (contains the accepted reads) and the discard file (contains the excluded reads). After trim operations, the function checks for remaining read length. When the read length is smaller than minSeqLen, the read will be discarded.}
 \value{Numeric. A vector of length 2 which contains the number of reads which are written to output and to discard}
+\references{
+Ewing B, Green P
+Base-calling of automated sequencer traces using phred. II. Error probabilities.
+Genome Research 1998 Vol. 8 No. 3 186-194
+}
 \author{Wolfgang Kaisers}
 \examples{
 basedir<-system.file("extdata",package="seqTools")

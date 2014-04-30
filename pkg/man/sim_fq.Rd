@@ -1,6 +1,6 @@
 \name{sim_fq}
 \alias{sim_fq}
-\title{sim_fq: Performs a simulation experiment where }
+\title{sim_fq: Performs an experimental series of separation capabilities of hierarchical clustering (HC) based on DNA k-mers in fastq files using simulated DNA content.}
 \description{
 Writes compressed fastq files where sequence sections contain concatenated k-mers which are uniformly distributed in the range of k-mers for given k. The function first writes a batch of randomly fastq files containing randomly simulated DNA sequence. In a second step the function repeatedly writes fastq files with random DNA sequence where a fraction of the reads is 'contaminated' with given DNA k-mers. In a third step, for each set of simulated and contaminated files, a hierarchical cluster (HC) tree based on DNA k-mers is calculated. For each set of files, the size of the smaller fraction in the first half of the tree is counted (perc). The value can be used as measure for separation capability of the HC algorithm.}
 \usage{
