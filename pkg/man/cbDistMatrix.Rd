@@ -19,7 +19,7 @@ cbDistMatrix(object,nReadNorm=max(nReads(object)))
   \item{object}{\code{Fastqq}: Object from which DNA k-mer counts are used.}
   \item{nReadNorm}{\code{numeric}: Number of reads per file to wich all contained DNA k-mer counts are scaled. Because it is intended to up-scale the value must be greater than all fastq file read counts (as reported by nReads). Therefore the standard value is chosen to the maximal number of reads recorded in this object. This scaling is necessary to compensate for systematic effects in the canberra distance.}
 }
-\details{The DNA k-mer counts are shrinked to a k of 6. The distance between two DNA k-mer count vectors is calculated by
+\details{The distance between two DNA k-mer scaled count vectors is calculated by
 \deqn{df_0(X,Y)=\frac{\sum_{i=1}^n cbd(x_i,y_i)}{4^k}}
 where cb is given by
 \deqn{cbd(x,y)=\frac{|x-y|}{x+y}}.
@@ -39,7 +39,7 @@ basedir<-system.file("extdata",package="seqTools")
 basenames<-c("g4_l101_n100.fq.gz","g5_l101_n100.fq.gz")
 filenames<-file.path(basedir,basenames)
 fq<-fastqq(filenames,6,c("g4","g5"))
-dm<-cbDistMatrix(fq,1e3)
+dm<-cbDistMatrix(fq)
 }
 \keyword{cbDistMatrix}
 \keyword{kmer}

@@ -3,7 +3,7 @@
 \alias{char2ascii}
 \title{ascii2char: Converting ASCII encoded values to character values.}
 \description{
-The function calculates phred values for a given range. As default, a data.frame with all phred values is returned. \code{char2ascii} does the reverse transformation.}
+\code{ascii2char} calculates character representations for given phred values. \code{char2ascii} returns phred values for given ASCII encoded representations (the reverse transformation of \code{ascii2char}).}
 \usage{
 ascii2char(x,multiple = FALSE)
 char2ascii(c)
@@ -14,7 +14,12 @@ char2ascii(c)
   \item{c}{\code{character}. Vector of length 1 (Longer vectors will generate Warnings).}
 }
 \details{The functions are only wrappers for convenience. \code{char2ascii} is defined as \code{strtoi(charToRaw(c), base = 16L)}. \code{ascii2char} is defined as \code{rawToChar(as.raw(x), multiple)}.}
-\value{\code{ascii2char} returns a \code{character}. \code{char2ascii} returns \code{integer}.}
+\value{\code{ascii2char} returns \code{character}. \code{char2ascii} returns \code{integer}.}
+\references{
+Ewing B, Green P
+Base-Calling of Automated Sequencer Traces Using Phred. II. Error Probabilities
+Genome Research 1998 8(3): 186-194
+}
 \author{Wolfgang Kaisers}
 \examples{
 ascii2char(97:101,multiple=FALSE)

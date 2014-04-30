@@ -23,5 +23,15 @@ test_countDnaKmers<-function()
 
 test_kMerIndex<-function()
 {
-  checkEquals(kMerIndex(c("AACC","ATAA")),c(5,48))
+  checkEquals(kMerIndex(c("AACC","ATAA")),c(6,49))
+}
+
+
+test_countSpliceKmers<-function()
+{
+  dna<-"atcgGTccAGatcg"
+  mt<-countSpliceKmers(dna,seqid=1,lEnd=4,rStart=11,width=2,strand=1,k=3)
+  
+  checkEquals(sum(mt),2)
+  checkTrue(all(mt[kMerIndex(c("atc","tcg"))]==1),"Check: countSpliceKmers")  
 }

@@ -73,7 +73,7 @@ writeSimFastq<-function(k = 6, nk = 5, nSeq = 10, filename = "sim.fq.gz")
 
 ## + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ##
 writeSimContFastq<-function(k = 6, nk = 5, nSeq = 10, pos = 1, 
-                        kIndex = 1, nContam = nSeq, filename = "simc.fq.gz")
+                            kIndex = 1, nContam = nSeq, filename = "simc.fq.gz")
 {
   # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   # k
@@ -229,7 +229,7 @@ simFastqqRunTimes<-function(k,nSeq,filedir=".")
     for(j in 1:length(nSeq))
     {
       message("[simFastqqRunTimes] (",format(m, w = 3),"/",nSim,
-                      ") Fastqq run.")
+              ") Fastqq run.")
       fq <- fastqq(fqFiles[j],k = k[i])
       res$k[m] <- k[i]
       res$nSeq[m] <- nSeq[j]
@@ -246,7 +246,7 @@ simFastqqRunTimes<-function(k,nSeq,filedir=".")
 ## + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ##
 
 sim_fq<-function(nRep = 2, nContamVec = c(100,1000), grSize = 20, nSeq = 1e4,
-                  k = 6, kIndex = 1365, pos = 20)
+                 k = 6, kIndex = 1365, pos = 20)
 {
   ## + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ##
   ## Arguments

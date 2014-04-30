@@ -66,7 +66,6 @@ static R_INLINE bool do_countCheck_Kmers(char const * const inseq, int * const a
 	unsigned long 	char_value,array_idx;
 	char const 		*iter;
 
-	//Rprintf("[do_countCheck_Kmers] k=%i\tnpos=%u\n",k,npos);
 	/*
 	 * Expected array length: 4^k
 	 * iter traverses seq from *inseq for npos positions
@@ -94,14 +93,18 @@ static R_INLINE bool do_countCheck_Kmers(char const * const inseq, int * const a
 			char_value=(unsigned long) ACGT[(unsigned)iter[j]];
 			if(char_value==zval)
 			{
-				// Jump over 'N' character
+				/*
+				 *  Jump over 'N' character
+				 */
 				if(ACGTN[(unsigned)iter[j]]==nval)
 				{
 					++iter;
 					array_idx=0;
 					++(*nn);
 
-					// current k-mer will not be counted
+					/*
+					 * current k-mer will not be counted
+					 */
 					val_ok=0;
 					break;
 				}
@@ -118,7 +121,9 @@ static R_INLINE bool do_countCheck_Kmers(char const * const inseq, int * const a
 				 * (2*((k-1)-j))= (m-j)<<1
 				 */
 				array_idx|= (char_value<<((m-j)<<1));
-				// current k-mer will be counted
+				/*
+				 * current k-mer will be counted
+				 */
 				val_ok=1;
 			}
 		}
@@ -625,7 +630,7 @@ SEXP rev_count_dna_Kmers(SEXP pSeq,SEXP pStart,SEXP pWidth, SEXP pK, SEXP pNn)
 	k=(int) INTEGER(pK)[0];
 	if(k<1)
 		error("[rev_count_dna_Kmers] k must be positive!");
-	// k = length of Kmer
+	/* k = length of Kmer */
 	if(k>max_k)
 		error("[rev_count_dna_Kmers] k must be <= %u!",max_k);
 
@@ -667,8 +672,6 @@ SEXP rev_count_dna_Kmers(SEXP pSeq,SEXP pStart,SEXP pWidth, SEXP pK, SEXP pNn)
 	SET_VECTOR_ELT(mat_dim_names, 1, col_names);
 	setAttrib(pArray, R_DimNamesSymbol, mat_dim_names);
 	nProtected=4;
-
-
 
 	/* For each sequence	*/
 	for(i=0;i<nCols;++i)
@@ -728,7 +731,7 @@ SEXP count_genome_Kmers(SEXP pSeq,SEXP pSeqid,SEXP pLstart,SEXP pWidth,SEXP pStr
 	k=INTEGER(pK)[0];
 	if(k<1)
 		error("[count_genome_Kmers] k must be positive!");
-	// k = length of Kmer
+	/* k = length of Kmer */
 	if(k>(int)max_k)
 		error("[count_genome_Kmers] k must be <= %u!",max_k);
 
@@ -793,7 +796,7 @@ SEXP count_genome_Kmers(SEXP pSeq,SEXP pSeqid,SEXP pLstart,SEXP pWidth,SEXP pStr
 		char const * const dna=CHAR(STRING_ELT(pSeq,INTEGER(pSeqid)[i]-1));
 
 		/* Do count Kmers	*/
-		if(INTEGER(pStrand)[i]==1) // (+) strand
+		if(INTEGER(pStrand)[i]==1) /* (+) strand */
 		{
 			if(!do_countCheck_Kmers(dna+INTEGER(pLstart)[i]-1,array+(i*nRows),INTEGER(pNn)+i,k,INTEGER(pWidth)[i]))
 				error("[count_genome_Kmers] character mismatch at position %u!",i);
@@ -864,7 +867,7 @@ SEXP count_splice_Kmers(SEXP pSeq,SEXP pSeqid,SEXP pLend,SEXP pRstart,SEXP pWidt
 	k=INTEGER(pK)[0];
 	if(k<1)
 		error("[count_splice_Kmers] k must be positive!");
-	// k = length of Kmer
+	/* k = length of Kmer */
 	if(k>max_k)
 		error("[count_splice_Kmers] k must be <= %u!",max_k);
 
@@ -872,48 +875,38 @@ SEXP count_splice_Kmers(SEXP pSeq,SEXP pSeqid,SEXP pLend,SEXP pRstart,SEXP pWidt
 	 * Create array which contains counted values
 	 * (matrix)
 	 * * * * * * * * * * * * * * * * * * * * * * * * * * */
-	nRows=(1<<(k<<1));						// 4^seqlen
-	array_size=(size_t) (nRows*nCols);		// nStart
+	nRows=(1<<(k<<1));						/* 4^seqlen */
+	array_size=(size_t) (nRows*nCols);		/* nStart	*/
 	pArray=PROTECT(allocMatrix(INTSXP,nRows,nCols));
 
-	if(nCols>1)
-	{
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * *
-		 * Dim attribute
-		 * * * * * * * * * * * * * * * * * * * * * * * * * * */
-		PROTECT(dim=allocVector(INTSXP, 2));
-		INTEGER(dim)[0] = nRows;
-		INTEGER(dim)[1] = nCols;
-		setAttrib(pArray, R_DimSymbol, dim);
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+	 * Dim attribute
+	 * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	PROTECT(dim=allocVector(INTSXP, 2));
+	INTEGER(dim)[0] = nRows;
+	INTEGER(dim)[1] = nCols;
+	setAttrib(pArray, R_DimSymbol, dim);
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * *
-		 * Column names
-		 * * * * * * * * * * * * * * * * * * * * * * * * * * */
-		PROTECT(col_names=allocVector(STRSXP,nCols));
-		buf=R_alloc(rbuf_size,sizeof(char));
-		for(i=0;i<nCols;++i)
-		{
-			sprintf(buf,"%i",i+1);
-			SET_STRING_ELT(col_names,i,mkChar(buf));
-		}
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * *
-		 * Row names: DNA k-mers
-		 * * * * * * * * * * * * * * * * * * * * * * * * * * */
-		PROTECT(mat_dim_names=allocVector(VECSXP, 2));
-		SET_VECTOR_ELT(mat_dim_names, 0, create_dna_k_mers(k));
-		SET_VECTOR_ELT(mat_dim_names, 1, col_names);
-		setAttrib(pArray, R_DimNamesSymbol, mat_dim_names);
-		nProtected=4;
-	}
-	else
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+	 * Column names
+	 * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	PROTECT(col_names=allocVector(STRSXP,nCols));
+	buf=R_alloc(rbuf_size,sizeof(char));
+	for(i=0;i<nCols;++i)
 	{
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * *
-		 * Add DNA k-mers as names
-		 * * * * * * * * * * * * * * * * * * * * * * * * * * */
-		setAttrib(pArray, R_NamesSymbol, create_dna_k_mers(k));
-		nProtected=1;
+		sprintf(buf,"%i",i+1);
+		SET_STRING_ELT(col_names,i,mkChar(buf));
 	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+	 * Row names: DNA k-mers
+	 * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	PROTECT(mat_dim_names=allocVector(VECSXP, 2));
+	SET_VECTOR_ELT(mat_dim_names, 0, create_dna_k_mers(k));
+	SET_VECTOR_ELT(mat_dim_names, 1, col_names);
+	setAttrib(pArray, R_DimNamesSymbol, mat_dim_names);
+	nProtected=4;
+
 	array=INTEGER(pArray);
 	memset(array,0,array_size*sizeof(int));
 	nPlusMm=0;
@@ -928,7 +921,17 @@ SEXP count_splice_Kmers(SEXP pSeq,SEXP pSeqid,SEXP pLend,SEXP pRstart,SEXP pWidt
 		char const * const dna=CHAR(STRING_ELT(pSeq,INTEGER(pSeqid)[i]-1));
 		if(INTEGER(pStrand)[i]==1) /* (+) strand	*/
 		{
-			if(!do_countCheck_Kmers(dna+INTEGER(pLend)[i]-INTEGER(pWidth)[i],array+(i*nRows),INTEGER(pNn)+i,k,INTEGER(pWidth)[i]))
+			/*
+			 * 	pLend: 1-based, char *inseq: 0-based
+			 *
+			 * Window position: Rightmost nuc of rightmost k-mer inside window = rightmost nuc of left exon
+			 *
+			 * 			A A A A C C C C G T C C C C A G C C C C
+			 * 			    x x x x									k=3, width=4
+			 *
+			 *
+			 */
+			if(!do_countCheck_Kmers(dna+INTEGER(pLend)[i]-INTEGER(pWidth)[i]-k+1,array+(i*nRows),INTEGER(pNn)+i,k,INTEGER(pWidth)[i]))
 				++nPlusMm;
 		}
 		else
@@ -938,7 +941,7 @@ SEXP count_splice_Kmers(SEXP pSeq,SEXP pSeqid,SEXP pLend,SEXP pRstart,SEXP pWidt
 		}
 	}
 
-	Rprintf("[count_splice_Kmers] Finished. char mismatches: %u on(+) and %u on (-) strand.\n",nPlusMm,nMinusMm);
+	Rprintf("[count_splice_Kmers] Finished. char mismatches: %u on (+) and %u on (-) strand.\n",nPlusMm,nMinusMm);
 	UNPROTECT(nProtected);
 	return pArray;
 }
@@ -1343,7 +1346,7 @@ SEXP count_fastq(SEXP pInfile, SEXP pK)
 	if(k<1)
 		error("[fastqq] k must be positive!");
 
-	// k = length of Kmer
+	/* k = length of Kmer */
 	if(k>max_k)
 		error("[fastqq] k must be <= %u!",max_k);
 
@@ -1532,7 +1535,7 @@ SEXP count_fastq(SEXP pInfile, SEXP pK)
 			phredCount=INTEGER(VECTOR_ELT(phredList,i));
 			for(j=0;j<seqlen;++j)
 			{
-				// Do regular counting
+				/* Do regular counting */
 				phred_value=(((unsigned char)seq[j])-33);
 				++phredCount[(nPhredRows*j)+phred_value];
 			}
@@ -1791,7 +1794,7 @@ SEXP trim_fastq(SEXP pInfile, SEXP pVals, SEXP pOutfile)
 		 * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		if(seqlen>maxSeqLen)
 		{
-			// resize buffers
+			/* resize buffers */
 			maxSeqLen=2*maxSeqLen > seqlen ? 2*maxSeqLen : seqlen;
 			ar_size=((size_t) maxSeqLen)+1;
 			seq=R_alloc(ar_size,sizeof(char));
@@ -1799,7 +1802,7 @@ SEXP trim_fastq(SEXP pInfile, SEXP pVals, SEXP pOutfile)
 			phred=R_alloc(ar_size,sizeof(char));
 			phred[maxSeqLen]='\0';
 		}
-		// + + + + + + + + + + + + + + + + + + + //
+		/* + + + + + + + + + + + + + + + + + + + */
 		memcpy(seq,fqp->pbuf,((unsigned long)seqlen)*sizeof(char));
 		sBegin=seq;
 		sEnd=seq+seqlen;
@@ -2009,7 +2012,7 @@ SEXP fastq_KmerSubset_locs(SEXP pInfile, SEXP pK, SEXP pKmerIdx)
 
 	fqParser 	*fqp;
 	int 		seqlen,seqpos, taix, raw_index;
-	char 		*seq; 		// pointer for DNA sequence
+	char 		*seq; 				/* pointer for DNA sequence */
 	int 		*array;
 	const char 	*filename;
 
@@ -2089,9 +2092,9 @@ SEXP fastq_KmerSubset_locs(SEXP pInfile, SEXP pK, SEXP pKmerIdx)
 	nCount=kMerIdxLen+1;
 	translation_vector= (int*) R_alloc((size_t)kArraySize,sizeof(int));
 	for(i=0;i<kArraySize;++i)
-		translation_vector[i]=kMerIdxLen;		// Translated index of "other"
+		translation_vector[i]=kMerIdxLen;		/* Translated index of "other" */
 	for(i=0;i<kMerIdxLen;++i)
-		translation_vector[kmerIdx[i]]=i;		// Translated index for given indexes
+		translation_vector[kmerIdx[i]]=i;		/* Translated index for given indexes */
 
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -2149,7 +2152,7 @@ SEXP fastq_KmerSubset_locs(SEXP pInfile, SEXP pK, SEXP pKmerIdx)
 		 * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		row_names=PROTECT(allocVector(STRSXP,nCount));
-		for(p=0;p<kMerIdxLen;++p) // nCount-1
+		for(p=0;p<kMerIdxLen;++p) /* nCount-1 */
 		{
 			for(j=0,m=(2*(k-1));j<k;++j)
 			{
@@ -2469,9 +2472,9 @@ SEXP fastq_Kmer_locs(SEXP pInfile,SEXP pK)
 				++nResize;
 			}
 
-			// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
-			// Do Kmer counting (No errors when non-nucs are found)
-			// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
+			/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+			 *  Do Kmer counting (No errors when non-nucs are found)
+			 * * * * * * * * * * * * * * * * * * * * * * * * * * */
 			for(seqpos=0;seqpos<=(seqlen-k);++seqpos)
 			{
 				// -1 = "other" value (returned when Non Nucs appear)
@@ -2480,9 +2483,9 @@ SEXP fastq_Kmer_locs(SEXP pInfile,SEXP pK)
 					++array[(seqpos*nCount)+array_index];
 			}
 
-			// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
-			// Skip phred values
-			// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
+			/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+			 * Skip phred values
+			 * * * * * * * * * * * * * * * * * * * * * * * * * * */
 			fqp_procPhred(fqp);
 			if(fqpFastqError(fqp))
 			{
@@ -2490,9 +2493,10 @@ SEXP fastq_Kmer_locs(SEXP pInfile,SEXP pK)
 				break;
 			}
 		}
-		// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
-		// Add to returned list
-		// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+		 * Add to returned list
+		 * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		if(maxSeqLen>maxFileSeqLen)
 		{
 			nCols=maxFileSeqLen-k+1;
@@ -2501,18 +2505,18 @@ SEXP fastq_Kmer_locs(SEXP pInfile,SEXP pK)
 		}
 		SET_VECTOR_ELT(pReturnList,i,pArray);
 
-		// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
-		// Cleanup
-		// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+		 * Cleanup
+		 * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		if(!fqpFastqError(fqp))
 			Rprintf("\tdone.\n");
 		else
 			Rprintf("[fastq_Klocs] File closed.\n");
 		fqp_destroy(fqp);
 
-		// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
-		// -> Next file.
-		// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+		 * -> Next file.
+		 * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	}
 	UNPROTECT(1+5*nFiles+nResize);
 	return pReturnList;
@@ -2546,12 +2550,12 @@ SEXP write_fai(SEXP pInfile,SEXP pOutfile)
 	if((unsigned)LENGTH(pOutfile)!=nFiles)
 		error("[write_fai] pInfile and pOutfile must have equal length!");
 
-	setlocale(LC_ALL, "");	// thousands sep
+	setlocale(LC_ALL, "");	/* thousands sep */
 
-	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
-	// Create buffer for sequence and qualities
-	// unsigned buf_size=1024; (stat_defs.h)
-	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+	 * Create buffer for sequence and qualities
+	 * unsigned buf_size=1024; (stat_defs.h)
+	 * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	head=(char*) R_alloc(rbuf_size,sizeof(char));
 	head_end=head+buf_size-1;
@@ -2560,7 +2564,7 @@ SEXP write_fai(SEXP pInfile,SEXP pOutfile)
 	buf_end=buf+buf_size-1;
 	*buf_end='\0';
 
-	// bytes_per_line=lineLen+1
+	/* bytes_per_line=lineLen+1 */
 	lineLen=0;
 	seq_len=0;
 	total_seq_len=0;
@@ -2588,11 +2592,10 @@ SEXP write_fai(SEXP pInfile,SEXP pOutfile)
 			if(buf[0]=='>')
 			{
 				++nSeqs;
-				//seq_len=0;
 
-				// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
-				// Copy head
-				// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
+				/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+				 * Copy head
+				 * * * * * * * * * * * * * * * * * * * * * * * * * * */
 				buf_iter=buf;
 				head_iter=head;
 				while(!(*buf_iter=='\0' || *buf_iter=='\n' || buf_iter>=buf_end))
@@ -2603,17 +2606,19 @@ SEXP write_fai(SEXP pInfile,SEXP pOutfile)
 				}
 				if(head_iter<head_end)
 					*head_iter='\0';
-				//Rprintf("[write_fai] Header    line: len=%2li\tseq='%s'\n",strlen(head),head);
+				/*
+				 * Rprintf("[write_fai] Header    line: len=%2li\tseq='%s'\n",strlen(head),head);
+				 */
 
 
-				// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
-				// First sequence line
-				// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
+				/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+				 * First sequence line
+				 * * * * * * * * * * * * * * * * * * * * * * * * * * */
 				first_base_offset=gztell(fin);
 				if(!gzgets(fin,buf,buf_size))
 					break;
 
-				// Skip comment lines
+				/* Skip comment lines */
 				while(!gzeof(fin) && buf[0]==';')
 				{
 					first_base_offset=gztell(fin);
@@ -2623,16 +2628,18 @@ SEXP write_fai(SEXP pInfile,SEXP pOutfile)
 
 				lineLen=(long) strlen(buf);
 
-				// Count Nucleotide characters
-				// Exclude newLine from count
+				/*
+				 * Count Nucleotide characters
+				 * Exclude newLine from count
+				 */
 				if(lineLen>0)
 					--lineLen;
 				seq_len=lineLen;
 				bases_per_line=lineLen;
 
-				// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
-				// Count subsequent lines
-				// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
+				/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+				 * Count subsequent lines
+				 * * * * * * * * * * * * * * * * * * * * * * * * * * */
 				while(!gzeof(fin) && buf[0]!='>')
 				{
 					if(!gzgets(fin,buf,buf_size))
@@ -2645,7 +2652,7 @@ SEXP write_fai(SEXP pInfile,SEXP pOutfile)
 						seq_len+=lineLen;
 				}
 			}
-			// Add Nucleotides from last line in file
+			/* Add Nucleotides from last line in file */
 			if(gzeof(fin))
 				seq_len+=lineLen;
 			total_seq_len+=seq_len;
@@ -2668,7 +2675,7 @@ void insertSeqName(SEXP col_names,R_xlen_t i,faTraverse *fat)
 	{
 		seqname=fat_getSeqName(fat);
 		SET_STRING_ELT(col_names,i,mkChar(seqname));
-		//Rprintf("[count_fasta_Kmers] New seq  : '%s'\n",seqname);
+		/* Rprintf("[count_fasta_Kmers] New seq  : '%s'\n",seqname); */
 		free(seqname);
 	}
 }
@@ -2676,9 +2683,12 @@ void insertSeqName(SEXP col_names,R_xlen_t i,faTraverse *fat)
 faTraverse * r_do_init_fat(const char * filename,int k)
 {
 	faTraverse *fat;
-	// Returns memory initialize structure.
-	// - File may be closed or empty
-	// - pos buffer still is empty
+	/*
+	 * Returns memory initialized structure
+	 * - File may be closed or empty
+	 * - pos buffer still is empty
+	 */
+
 	fat=fat_init(filename,k);
 
 	if(!fat)
@@ -2709,9 +2719,12 @@ faTraverse * r_do_init_fat(const char * filename,int k)
 		fat_destroy(fat);
 		return 0;
 	}
-	// Returns a full initialized faTraverse structure:
-	// - File is opened and non-empty.
-	// - faTraverse buffer pos-array contains initial filling.
+
+	/*
+	 * Returns a full initialized faTraverse structure:
+	 * - File is opened and non-empty.
+	 * - faTraverse buffer pos-array contains initial filling.
+	 */
 	return fat;
 }
 
@@ -2725,17 +2738,16 @@ SEXP count_fasta_Kmers(SEXP pFasta, SEXP pK)
 	int i,nn=0;
 	int *array;
 
-	int iCol;				// column index: For inserting column names
-	unsigned array_offset;		// For do_countCheck_Kmers: = (iCol-1)*nRows
+	int iCol;					/* column index: For inserting column names		*/
+	unsigned array_offset;		/* For do_countCheck_Kmers: = (iCol-1)*nRows	*/
 
 	faTraverse *fat;
 
 	SEXP pArray,col_names,dim,mat_dim_names;
 
-	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
-	// Check incoming args
-	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
-
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+	 * Check incoming args
+	 * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	nProtected=0;
 	if(TYPEOF(pFasta)!=STRSXP)
 		error("[count_fasta_Kmers] pFasta must be a string!");
@@ -2745,36 +2757,35 @@ SEXP count_fasta_Kmers(SEXP pFasta, SEXP pK)
 	k=INTEGER(pK)[0];
 	if(k<1)
 		error("[count_fasta_Kmers] k must be positive!");
-	// k = length of Kmer
 	if(k>max_k)
 		error("[count_fasta_Kmers] k must be <= %u!",max_k);
 
-	// See seqTools.h for constant
+	/* See seqTools.h for constant */
 	nCols=(int) default_fasta_Kmers_col_number;
 
-	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
-	// Create array which contains counted values
-	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
-	nRows=(1<<(k<<1));				// 4^seqlen
-	array_size=(1<<(k<<1))*nCols;	// nStart
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+	 * Create array which contains counted values
+	 * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	nRows=(1<<(k<<1));				/* 4^seqlen */
+	array_size=(1<<(k<<1))*nCols;	/* nStart   */
 	pArray=PROTECT(allocMatrix(INTSXP,nRows,nCols));
 	++nProtected;
 	col_names=R_NilValue;
 
-	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
-	// Dim attribute
-	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+	 * Dim attribute
+	 * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	dim=PROTECT(allocVector(INTSXP, 2));
 	++nProtected;
 	INTEGER(dim)[0] = nRows;
 	INTEGER(dim)[1] = nCols;
 	setAttrib(pArray, R_DimSymbol, dim);
 
-	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
-	// Column names:
-	// First insert numbers.
-	// Then write fasta-seq id's
-	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+	 * Column names:
+	 * First insert numbers
+	 * Then write fasta-seq id's.
+	 * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	PROTECT(col_names=allocVector(STRSXP,nCols));
 	++nProtected;
@@ -2785,24 +2796,24 @@ SEXP count_fasta_Kmers(SEXP pFasta, SEXP pK)
 		SET_STRING_ELT(col_names,i,mkChar(buf));
 	}
 
-	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
-	// Row names: DNA k-mers
-	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+	 * Row names: DNA k-mers
+	 * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	mat_dim_names=PROTECT(allocVector(VECSXP, 2));
 	++nProtected;
 	SET_VECTOR_ELT(mat_dim_names, 0, create_dna_k_mers(k));
 	SET_VECTOR_ELT(mat_dim_names, 1, col_names);
 	setAttrib(pArray, R_DimNamesSymbol, mat_dim_names);
 
-	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
-	// Prepare array and writing indices
-	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+	 * Prepare array and writing of indices
+	 * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	array=INTEGER(pArray);
 	memset(array,0,((unsigned long) array_size)*sizeof(int));
 
-	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
-	// Open file and read Sequence
-	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+	 * Open file and read sequence
+	 * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	fat=r_do_init_fat(CHAR(STRING_ELT(pFasta,0)),k);
 	if(!fat)
 		return R_NilValue;
@@ -2815,19 +2826,19 @@ SEXP count_fasta_Kmers(SEXP pFasta, SEXP pK)
 		fat_skipSeqHeader(fat);
 	}
 
-	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
-	// Traverse file and count DNA k-mers
-	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
-
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+	 * Traverse file and count DNA k-mers
+	 * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	while(!fatEmpty(fat))
 	{
 		if(fat_findKarray(fat))
 		{
 			if(fatNucReady(fat))
 			{
-				// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
-				// npos=fat->das->npPos-k+1; // Number of K-mer starting points
-				// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + //
+				/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+				 * Number of K-mer starting points
+				 * npos=fat->das->npPos-k+1;
+				 * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 				if(!do_countCheck_Kmers(fat->das->pos,array+array_offset,&nn,k,fat->das->npPos-k+1))
 					error("[count_fasta_Kmers] character mismatch!");
@@ -2836,7 +2847,7 @@ SEXP count_fasta_Kmers(SEXP pFasta, SEXP pK)
 			{
 				if(iCol>=nCols)
 				{
-					//Rprintf("[count_fasta_Kmers] Enlarge array.\n");
+					/* Rprintf("[count_fasta_Kmers] Enlarge array.\n"); */
 					nCols*=2;
 					pArray=PROTECT(enlarge_int_mat(pArray,nRows,nCols));
 					mat_dim_names=getAttrib(pArray, R_DimNamesSymbol);
@@ -2883,25 +2894,26 @@ SEXP get_column_quantiles(SEXP pQuant, SEXP pDf)
 	char *buf;
 	SEXP rQvec,wQvec,dflist,col_names,in_col_names,row_names;
 
-	// + + + + + + + + + + + + + + + + + + + + + + + + + +
-	// pQuant is expected to contain unique
-	// and ascending sorted values
-	// + + + + + + + + + + + + + + + + + + + + + + + + + +
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+	 * pQuant is expected to contain unique
+	 * and ascending sorted values
+	 * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	if(TYPEOF(pQuant)!=REALSXP)
 		error("[get_col_quantiles] pQuant must be REAL!");
 
-	// + + + + + + + + + + + + + + + + + + + + + + + + + +
-	// pDf is expected to be a data.frame
-	// where all columns contain relative values
-	// (between 0 and 1, so direct comparison to pQuant
-	// works
-	// and all columns sum up to 1
-	// + + + + + + + + + + + + + + + + + + + + + + + + + +
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+	 * pDf is expected to be a data.frame
+	 * where all columns contain relative values
+	 * (between 0 and 1, so direct comparison to pQuant
+	 * works) and all columns sum up to 1.
+	 * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	if(TYPEOF(pDf)!=VECSXP)
 		error("[get_col_quantiles] pDf must be VECSXP!");
 
-	// + + + + + + + + + + + + + + + + + + + + + + + + + +
-	// Nr of Rows for writing = Nr of quantile values
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+	 * Nr of Rows for writing = Nr of quantile values
+	 * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	nwRows=(unsigned) LENGTH(pQuant);
 	// Nr of Rows for reading = Nr of rows in pDf
 	nrRows=(unsigned) LENGTH(VECTOR_ELT(pDf,0));

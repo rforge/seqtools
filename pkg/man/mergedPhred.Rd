@@ -33,7 +33,10 @@ plotMergedPhredQuant(object, main, ...)
 \references{
 Cock PJA, Fields CJ, Goto N, Heuer ML, Rice PM
 The sanger fastq file format for sequences with quality scores and the Solexa/Illumina fastq variants.
-Nucleic Acids Research 2010 Vol.38 No.6 1767-1771
+Nucleic Acids Research 2010 Vol.38 No.6 1767-1771\\
+Ewing B, Green P
+Base-calling of automated sequencer traces using phred. II. Error probabilities.
+Genome Research 1998 Vol. 8 No. 3 186-194
 }
 \author{
 Wolfgang Kaisers
@@ -50,5 +53,6 @@ pq<-mergedPhredQuantiles(fq,c(0.25,0.5,0.75))
 plotMergedPhredQuant(fq)
 #
 }
-\keyword{fastqKmerSubsetLocs}
-\keyword{kmer}
+\keyword{mergedPhred}
+\keyword{mergedPhredQuantiles}
+\keyword{plotMergedPhredQuant}

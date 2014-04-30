@@ -19,7 +19,6 @@ collectTime(object)
 \arguments{
   \item{object}{\code{Fastqq}. Object from which collection duration (or times) is returned.}
 }
-\details{Maximal allowed value for k is 12.}
 \value{\code{collectTime} returns \code{numeric}. \code{collectTime} returns \code{list}.}
 \author{
 Wolfgang Kaisers

@@ -5,7 +5,7 @@
 \alias{meltDownK,Fastqq-method}
 %
 \title{
-meltDownK: Condensing DNA k-mer count data to lower K (i.e. shorter DNA motifs).
+meltDownK: Condensing DNA k-mer count data to lower k-value (i.e. shorter DNA motifs).
 }
 \description{
 Returns a copy of given object where DNA k-mer counts and first DNA k-mer count table are reduced in size. }

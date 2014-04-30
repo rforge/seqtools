@@ -68,7 +68,7 @@ enlargeIntMat <- function(x, newDim){
   return(.Call("r_enlarge_int_mat", x, newDim, PACKAGE="seqTools"))
 }
 
-kMerIndex <- function(kMers, k=nchar(kMers)[1])
+kMerIndex <- function(kMers, k=nchar(kMers)[1], base = 1)
 {
   if(!is.character(kMers))
     stop("kMers must be character.")
@@ -79,8 +79,15 @@ kMerIndex <- function(kMers, k=nchar(kMers)[1])
     stop("k must be in range 0,  ... , ", max_k, ".")
   if(!all(nchar(kMers) == k))
     stop("All kMers must have k characters!")
+  if(!is.numeric(base))
+    stop("base must be numeric")
+  if(length(base)>1)
+    stop("base must have length 1.")
+  base<-as.integer(base)
+  if(!(base %in% 0:1))
+    stop("base must be 0 or 1.")
   
-  return(.Call("get_Kmer_Index", kMers, k, PACKAGE="seqTools"))
+  return(.Call("get_Kmer_Index", kMers, k, PACKAGE="seqTools")+base)
 }
 
 ## + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ##

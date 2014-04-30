@@ -24,12 +24,12 @@ plotPhredDist(object, i, maxp=45, col, ...)
   \item{col}{Colour encoding for plotted lines.}
   \item{...}{Additional values passed to plot function.}
 }
-\details{i must be a numerical vector with values in 1,...,nFiles. The \code{plotPhredDist} function is also prepared for additional arguments: The maxp value denotes the maximal Phred value until which the Phred values are plottted (evtl. shrinks the x-Axis). The standard line color is \code{topo.colors(10)[3]}. Additional arguments (e.g. main="") can be passed to the plot function.}
+\details{i must be a numerical vector with values in \{1,...,nFiles\}. The \code{plotPhredDist} function is also prepared for additional arguments: The maxp value denotes the maximal Phred value until which the Phred values are plotted (possibly shrinks the x-Axis). The standard line color is \code{topo.colors(10)[3]}. Additional arguments (e.g. main="") can be passed to the plot function.}
 \value{\code{phredDist} returns \code{numeric}. \code{plotPhredDist} returns nothing.}
 \references{
-Cock PJA, Fields CJ, Goto N, Heuer ML, Rice PM
-The sanger fastq file format for sequences with quality scores and the Solexa/Illumina fastq variants.
-Nucleic Acids Research 2010 Vol.38 No.6 1767-1771
+Ewing B, Green P
+Base-calling of automated sequencer traces using phred. II. Error probabilities.
+Genome Research 1998 Vol. 8 No. 3 186-194
 }
 \author{
 Wolfgang Kaisers

@@ -65,13 +65,15 @@ revCountDnaKmers <- function(dna, k, start, width)
     width <- as.integer(width)
   if(length(width) == 1)
     width <- rep(width, length(start))
+  if(length(width)!=length(start))
+    stop("'width' must have length 1 or the same length as 'start'.")
   if(is.numeric(k))
     k <- as.integer(k)  
   if(any(width + k > start))
     stop("'width' must be <=  'start' - 'k'.")
   
-  # Counts N's
-  # ToDo: Return value
+  # nn contains N counts
+  # ToDo: Add value of nn to returned object
   nn <- integer(length(start))
   return(.Call("rev_count_dna_Kmers", dna, start, width, k, nn,
                PACKAGE = "seqTools"))
@@ -79,96 +81,102 @@ revCountDnaKmers <- function(dna, k, start, width)
 
 ## + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ##
 ## Counts DNA k-mers on specified regions inside multiple (character) sequences
-##  in possibly reversed direction (depending on wStrand)
+##  in possibly reversed direction (depending on strand)
 ## + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ##
-countGenomeKmers <- function(dna, wSeqid, wStart, wWidth, wStrand, k)
+countGenomeKmers <- function(dna, seqid, start, width, strand, k)
 {
   if(!is.character(dna))
     stop("'dna' must be character.")
-  if(!is.numeric(wSeqid))
-    wSeqid <- as.integer(wSeqid)
-  rg <- range(wSeqid)
+  if(!is.numeric(seqid))
+    seqid <- as.integer(seqid)
+  rg <- range(seqid)
   if(rg[1] < 0)
     stop("Negative seqid's are not allowed.")
   if(rg[2] > length(dna))
     stop("Out of range seqid's.")
   
-  if(!is.numeric(wStart))
-    stop("'wStart' must be numeric.")
-  wStart <- as.integer(wStart)
-  if(!is.numeric(wWidth))
-    stop("'wWidth' must be numeric")
-  wWidth <- as.integer(wWidth)
+  if(!is.numeric(start))
+    stop("'start' must be numeric.")
+  start <- as.integer(start)
+  if(!is.numeric(width))
+    stop("'width' must be numeric")
+  width <- as.integer(width)
   
-  if(is.factor(wStrand))
-    wStrand <- as.integer(wStrand)
+  if(is.factor(strand))
+    strand <- as.integer(strand)
   else
   {
-    if(!is.numeric("wStrand"))
-      wStrand <- as.integer(wStrand)    
+    if(!is.numeric("strand"))
+      strand <- as.integer(strand)    
   }
   
-  nStart <- length(wStart)
-  if( (length(wSeqid) != nStart) | (length(wWidth) != nStart) | 
-        (length(wStrand) != nStart) )
-    stop("'wSeqid', 'wStart', 'wWidth' and 'wStrand' must have same length.")
+  nStart <- length(start)
+  if( (length(seqid) != nStart) | (length(width) != nStart) | 
+        (length(strand) != nStart) )
+    stop("'seqid', 'start', 'width' and 'strand' must have same length.")
   if(length(k) != 1)
     stop("'k' must be a single value.")
+  if(!is.numeric(k))
+    stop("'k' must be numeric.")
+  k<-as.integer(k)  
+  if(k<=0)
+    stop("'k' must be >=1")
+
   if(k>max_k)
     stop("'k' must not exceed", max_k, ".")
   
   # Counts N's
   # ToDo: Return value
-  nn <- integer(length(wStart))
+  nn <- integer(length(start))
   
-  return(.Call("count_genome_Kmers", dna, wSeqid, wStart, wWidth, 
-               wStrand, k, nn, PACKAGE = "seqTools")) 
+  return(.Call("count_genome_Kmers", dna, seqid, start, width, 
+               strand, k, nn, PACKAGE = "seqTools")) 
 }
 
 
 ## + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ##
 ## Counts DNA k-mers on each border of a splice-site defined by wLend and 
-## wRstart in range of size wWidth
+## wRstart in range of size width
 ## + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ##
-countSpliceKmers <- function(dna, wSeqid, wLend, wRstart, wWidth, wStrand, k)
+countSpliceKmers <- function(dna, seqid, lEnd, rStart, width, strand, k)
 {
   if(!is.character(dna))
     stop("'dna' must be character.")
-  if(!is.numeric(wSeqid))
-    stop("'wSeqid' must be numeric.")
-  wSeqid <- as.integer(wSeqid)
+  if(!is.numeric(seqid))
+    stop("'seqid' must be numeric.")
+  seqid <- as.integer(seqid)
   
-  rg <- range(wSeqid)
+  rg <- range(seqid)
   if(rg[1] < 0)
     stop("Negative seqid's are not allowed.")
   if(rg[2] > length(dna))
     stop("Out of range seqid's.")
   
-  if(!is.numeric(wLend))
-    stop("'wLend' must be numeric.")
-  wLend <- as.integer(wLend)
-  if(!is.numeric(wRstart))
-    stop("'wRstart' must be numeric.")
-  wRstart <- as.integer(wRstart)
+  if(!is.numeric(lEnd))
+    stop("'lEnd' must be numeric.")
+  lEnd <- as.integer(lEnd)
+  if(!is.numeric(rStart))
+    stop("'rStart' must be numeric.")
+  rStart <- as.integer(rStart)
   
-  if(!is.numeric(wWidth))
-    stop("'wWidth' must be numeric.")
-  wWidth <- as.integer(wWidth)
+  if(!is.numeric(width))
+    stop("'width' must be numeric.")
+  width <- as.integer(width)
   
-  if(is.factor(wStrand))
-    wStrand <- as.integer(wStrand)
+  if(is.factor(strand))
+    strand <- as.integer(strand)
   else
   {
-    if(!is.numeric("wStrand"))
-      wStrand <- as.integer(wStrand)    
+    if(!is.numeric("strand"))
+      strand <- as.integer(strand)    
   }
   
-  nStart <- length(wLend)
-  if(length(wSeqid) != nStart | length(wRstart) != nStart | 
-       length(wWidth) != nStart | length(wStrand) != nStart)
+  nStart <- length(lEnd)
+  if(length(seqid) != nStart | length(rStart) != nStart | 
+       length(width) != nStart | length(strand) != nStart)
     stop(
-"'wSeqid', 'wLend', 'wRstart', 'wWidth' and 'wStrand' must have equal length.")
-
+      "'seqid', 'lEnd', 'rStart', 'width' and 'strand' must have equal length.")
+  
   if(!is.numeric(k))
     stop("'k' must be numeric.")
   k <- as.integer(k)
@@ -177,13 +185,23 @@ countSpliceKmers <- function(dna, wSeqid, wLend, wRstart, wWidth, wStrand, k)
   if(k > max_k)
     stop("'k' must not exceed", max_k, ".")
   
+  # Plus strand
+  plus_strand<-strand==1
+  if(sum(plus_strand)>0)
+  {
+    if(any((lEnd[plus_strand]-width[plus_strand]-k+1)<0))
+      stop("lEnd must be >= width+k-1 for all +-strand coordinates")
+  }
+  
+  
   # Counts N's
   # ToDo: Return value
   nn <- integer(length = nStart)
   
-  return(.Call("count_splice_Kmers", dna, wSeqid, wLend, wRstart, wWidth, 
-               wStrand, k, nn, PACKAGE = "seqTools")) 
+  return(.Call("count_splice_Kmers", dna, seqid, lEnd, rStart, width, 
+               strand, k, nn, PACKAGE = "seqTools")) 
 }
+
 
 ## + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ##
 ## END OF FILE

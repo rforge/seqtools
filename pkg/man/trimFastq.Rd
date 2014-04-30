@@ -21,7 +21,7 @@ trimFastq(infile,outfile="keep.fq.gz",discard="disc.fq.gz",qualDiscard=0,qualMas
   \item{qualTrimRight}{\code{numeric}. Suffix where all phred scores are < qualTrimRight will be trimmed.}
   \item{minSeqLen}{\code{numeric}. All reads where sequence length after (fixed and quality based) trimming is <minSeqLen will be descarded (i.e. output to discard).}
 }
-\details{After trim operations, the function checks for remaining read length. When read length is smaller than minSeqLen, the read will be discarded (i.e. output to discard).}
+\details{After trim operations, the function checks for remaining read length. When read length is smaller than minSeqLen, the read will be discarded (i.e. the read will be written to the discard file).}
 \value{Numeric. A vector of length 2 which contains the number of reads which are written to output and to discard}
 \author{Wolfgang Kaisers}
 \examples{

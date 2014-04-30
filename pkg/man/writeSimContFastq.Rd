@@ -15,7 +15,7 @@ writeSimContFastq(k=6,nk=5,nSeq=10,pos=1,kIndex=1,nContam=nSeq,filename="simc.fq
   \item{nContam}{\code{numeric}. Absolute number of contaminated reads. The k-mer's are inserted at the firsts 'nContam' reads of the sequence array. }
   \item{filename}{\code{character}. Name of written (compressed) fastq file.}
 }
-\details{The read headers are consequtive numbered. The phred quality values are equally set to 46 (='.') which represents a phred value of 13.}
+\details{The read headers are consequtive numbered. The phred quality values are equally set to 46 (='.') which represents a phred value of 13. This function is not designed for routine use. The random content fastq files can be used in order to measure the separation capabilities of hierarchical clustering mechanisms.}
 \value{None.}
 \author{Wolfgang Kaisers}
 \examples{

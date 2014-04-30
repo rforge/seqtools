@@ -9,11 +9,11 @@ Reads (compressed) fastq files and counts for given DNA k-mer subset for each po
 fastqKmerSubsetLocs(filenames,k=4,kIndex)
 }
 \arguments{
-  \item{filenames}{Character. Vector of fastqKmerSubsetLocs file names. Files can be gz compressed.}
-  \item{k}{Integer. Length of counted DNA k-mers.}
-  \item{kIndex}{Integer. Numeric values which represent indices of DNA-k mers.}
+  \item{filenames}{\code{character}. Vector of fastqKmerSubsetLocs file names. Files can be gz compressed.}
+  \item{k}{\code{integer}. Length of counted DNA k-mers.}
+  \item{kIndex}{\code{integer}. Numeric values which represent indices of DNA-k mers.}
 }
-\details{Maximal allowed value for k is 16. maxSeqLen must be >= k.}
+\details{Maximal allowed value for k is 12.}
 \value{\code{list}. Contains for each given file a matrix with 4^k rows and (maxSeqLen-k+1) columns. The matrix contains for each k-mer and k-mer-start position the counted values.}
 \references{
 Cock PJA, Fields CJ, Goto N, Heuer ML, Rice PM

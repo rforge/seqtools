@@ -12,7 +12,7 @@ writeSimFastq(k=6,nk=5,nSeq=10,filename="sim.fq.gz")
   \item{nSeq}{\code{numeric}. Number of simulated reads in fastq-file. Default value is 10.}
   \item{filename}{\code{character}. Name of written (compressed) fastq file.}
 }
-\details{The read headers are consequtive numbered. The phred quality values are equally set to 46 (='.') which represents a phred value of 13.}
+\details{The read headers are consequtive numbered. The phred quality values are equally set to 46 (='.') which represents a phred value of 13. This function is not designed for routine use. The random content fastq files can be used in order to measure the separation capabilities of hierarchical clustering mechanisms.}
 \value{None.}
 \author{Wolfgang Kaisers}
 \examples{

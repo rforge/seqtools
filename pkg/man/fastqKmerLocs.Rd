@@ -13,7 +13,7 @@ fastqKmerLocs(filenames,k=4)
   \item{filenames}{ Vector of fastqKmerLocs file names. Files can be gz compressed.}
   \item{k}{Length of counted DNA k-mers.}
 }
-\details{Maximal allowed value for k is 16.}
+\details{Maximal allowed value for k is 12.}
 \value{\code{list}. Contains for each given file a matrix with 4^k rows and (maxSeqLen-k+1) columns. The matrix contains for each k-mer and k-mer-start position the counted values.}
 \references{
 Cock PJA, Fields CJ, Goto N, Heuer ML, Rice PM
