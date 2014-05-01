@@ -9,7 +9,7 @@ simFastqqRunTimes(k,nSeq,filedir=".")
 \arguments{
   \item{k}{\code{numeric}. Length of k-mer. Default value is 2:15.}
   \item{nSeq}{\code{numeric}. Number of simulated reads in fastq-file. Default value is (100, 1000,...,10000000).}
-  \item{filedir}{\code{character}. The output can be placed in a separate directory. When not existant, the function tries to create 'filedir'.}
+  \item{filedir}{\code{character}. The output can be placed in a separate directory. When not existant, the function tries to create 'filedir'. The function throws an error when writing is not permitted in the given directory (Could not open file ...).}
 }
 \details{The fastq files contain the parameter settings inside their filename. The files are created with 'writeSimFastq'.}
 \value{\code{data.frame}. The data frame has four columns: id,k,nSeq and runtime.}

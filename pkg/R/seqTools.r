@@ -521,7 +521,7 @@ setMethod("plotNucFreq", "Fastqq", function(object, i, main, maxx, ...){
   if(missing(main))
     main <- paste("Position wise Nucleotide frequency (", probeLabel(object)[i], ")", sep = "")
   plot(x, x, ylim = c(0, maxY), type = "n", bty = "n", las = 1, ylab = "Nucleotide fequency", 
-       xlab = "sequence position", main = main)
+       xlab = "sequence position", main = main, ...)
  
   lines(x, nacrel[1, ], col = cols[1], lwd = 2)
   lines(x, nacrel[2, ], col = cols[2], lwd = 2)
@@ -886,7 +886,7 @@ setMethod("cbDistMatrix", "Fastqq", function(object,
   if(nReadNorm<max(nReads(object)))
     stop("'nReadNorm' must be greater than all nRead.")
   
-  # Column-wise scaling up read counts so that column sums
+  # Column-wise normalizing read counts (by upscaling) so that column sums
   # become nearly equal in order to compensate
   # sequencing depth artifacts in Canberra distance values
   scale <- nReadNorm/nReads(object)

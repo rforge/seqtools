@@ -25,6 +25,7 @@ Genome Research 1998 8(3): 186-194
 ascii2char(97:101,multiple=FALSE)
 ascii2char(97:101,multiple=TRUE)
 char2ascii("abcde")
+char2ascii(paste("a","b","c",collapse=""))
 ascii2char(char2ascii("abcde"))
 }
 \seealso{getPhredTable}

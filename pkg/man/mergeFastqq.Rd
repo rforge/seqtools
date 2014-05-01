@@ -13,7 +13,7 @@ mergeFastqq(lhs,rhs)
   \item{lhs}{\code{Fastqq}.}
   \item{rhs}{\code{Fastqq}.}
 }
-\details{The function returns a data frame. Each colum containts the motif-count values for one frame. Each row represents one DNA motif. The DNA sequence of the DNA motif is given as row.name.}
+\details{The data on all fastq files in the two incoming objects is merged together. The object has the same internal structure as if the data from all fastq files had been collected by a separate call of \code{fastqq} on the merged fastq file names of the arguments.}
 \value{S4 Object of class 'Fastqq'.}
 \author{Wolfgang Kaisers}
 \examples{

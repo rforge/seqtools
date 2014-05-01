@@ -20,9 +20,9 @@ propPhred(object, greater = 30, less = 93)
 \details{The \code{greater} and \code{less} arguments must be numeric, have length 1 and be >0 and < 94. \code{greater} must be less than \code{less}. With the default settings the reported proportions should be >50 \% for all lanes in order to be acceptable (see 't Hoen et. al.).}
 \value{Numeric.}
 \references{
-Ewing B, Green P
-Base-calling of automated sequencer traces using phred. II. Error probabilities.
-Genome Research 1998 Vol. 8 No. 3 186-194
+'t Hoen et.al
+Reproducibility of high-throughput mRNA and small RNA sequencing across laboratories
+Nature Biotechnology 2013 Vol. 31  1015 - 1022 (doi:10.1038/nbt.2702)
 }
 \author{
 Wolfgang Kaisers

@@ -20,7 +20,7 @@ plotKmerCount(object,index,mxey,main="K-mer count",...)
   \item{main}{\code{character}(optional): Caption text which printed into the output.}
   \item{...}{Additional parameters which are passed down to the plot function.}
 }
-\details{Values for i must be in 1,...,nFiles. The function shrinks the k-mer count table down to size of 4096 (k=6) when k>6 in order to limit number of plotted lines.}
+\details{Values for i must be in \{1,...,nFiles\}. The function shrinks the k-mer count table down to size of 4096 (k=6) when k>6 in order to limit the complexity of the plot.}
 \value{None.}
 \references{
 Cock PJA, Fields CJ, Goto N, Heuer ML, Rice PM

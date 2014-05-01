@@ -14,7 +14,7 @@ fastqKmerLocs(filenames,k=4)
   \item{k}{Length of counted DNA k-mers.}
 }
 \details{Maximal allowed value for k is 12.}
-\value{\code{list}. Contains for each given file a matrix with 4^k rows and (maxSeqLen-k+1) columns. The matrix contains for each k-mer and k-mer-start position the counted values.}
+\value{\code{list}. The length of the list equals the number of given filenames. Contains for each given file a matrix with 4^k rows and (maxSeqLen-k+1) columns. The matrix contains for each k-mer and k-mer-start position the counted values.}
 \references{
 Cock PJA, Fields CJ, Goto N, Heuer ML, Rice PM
 The sanger fastq file format for sequences with quality scores and the Solexa/Illumina fastq variants.

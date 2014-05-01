@@ -15,7 +15,7 @@ sim_fq(nRep=2,nContamVec=c(100,1000),grSize=20,nSeq=1e4,k=6,kIndex=1365,pos=20)
   \item{kIndex}{\code{numeric}. k-mer index of inserted k-mer(s). The k-mer index can be retreaved for a given k-mer with 'getKmerIndex'. Default value is 1365 (="CCCCCC").}
   \item{pos}{\code{numeric}. Determines at which position in sequence the k-mer is inserted. 1-based (1=first position).}
 }
-\details{The function is intended to be used as explorative tool (not for routine quality assessment). There are some files written and there will be a lot of output on the terminal. It is therefore recommended to switch to a separate working directory and to run this function on a separate terminal. }
+\details{The function is intended to be used as explorative tool (not for routine quality assessment). There are some files written and there will be a lot of output on the terminal. It is therefore recommended to switch to a separate working directory and to run this function on a separate terminal. The function is not exported.}
 \value{\code{data.frame} containing results of the counted perc values for each repetition of the simulation.}
 \author{Wolfgang Kaisers}
 \examples{

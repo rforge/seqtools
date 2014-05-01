@@ -2,7 +2,7 @@
 \alias{phredTable}
 \title{phredTable: Returns a data.frame with phred encodings.}
 \description{
-The function calculates phred values for a given range. As default, a data.frame with all phred values is returned.}
+The function calculates characters and corresponding ascii values for a given range of phred values. As default, a data.frame with all valid phred values \{0,...,93\} is returned.}
 \usage{
 phredTable(phred)
 }

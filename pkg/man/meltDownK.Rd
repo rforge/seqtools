@@ -25,7 +25,6 @@ The sanger fastq file format for sequences with quality scores and the Solexa/Il
 Nucleic Acids Research 2010 Vol.38 No.6 1767-1771
 }
 \author{Wolfgang Kaisers}
-\note{The static size of the retured k-mer array is 4^k.}
 \examples{
 basedir<-system.file("extdata",package="seqTools")
 setwd(basedir)

@@ -9,7 +9,7 @@
 cbDistMatrix function: Calculates pairwise distance matrix from DNA k-mer counts based on a modified Canberra distance.
 }
 \description{
-Calculates pairwise distance matrix from DNA k-mer counts based on a modified Canberra distance. Before calculating canberra distances, sequencing depth artifacts are compensated by saling up read counts in each DNA k-mer count vector so that scaled read counts in each sample are nearly equal.
+Calculates pairwise distance matrix from DNA k-mer counts based on a modified Canberra distance. Before calculating canberra distances, read counts are normalized (in order to correct systematic effects on the distance) by saling up read counts in each DNA k-mer count vector so that normalized read counts in each sample are nearly equal.
 }
 \usage{
 cbDistMatrix(object,nReadNorm=max(nReads(object)))
@@ -17,9 +17,9 @@ cbDistMatrix(object,nReadNorm=max(nReads(object)))
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{object}{\code{Fastqq}: Object from which DNA k-mer counts are used.}
-  \item{nReadNorm}{\code{numeric}: Number of reads per file to wich all contained DNA k-mer counts are scaled. Because it is intended to up-scale the value must be greater than all fastq file read counts (as reported by nReads). Therefore the standard value is chosen to the maximal number of reads recorded in this object. This scaling is necessary to compensate for systematic effects in the canberra distance.}
+  \item{nReadNorm}{\code{numeric}: Number of reads per file to wich all contained DNA k-mer counts are normalized. Because the normalization is intended to increase counts the value must be greater than all fastq file read counts (as reported by nReads). Therefore the standard value is chosen to the maximal number of reads recorded in this object. This normalization is necessary to compensate for systematic effects in the canberra distance.}
 }
-\details{The distance between two DNA k-mer scaled count vectors is calculated by
+\details{The distance between two DNA k-mer normalized count vectors is calculated by
 \deqn{df_0(X,Y)=\frac{\sum_{i=1}^n cbd(x_i,y_i)}{4^k}}
 where cb is given by
 \deqn{cbd(x,y)=\frac{|x-y|}{x+y}}.

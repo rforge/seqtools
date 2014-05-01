@@ -113,7 +113,7 @@ The following methods are defined for class \code{Fastqq}:
         %
         \item{seqLenCount}{\code{signature(object="Fastqq")}: Returns matrix which tables counted read length in all fastq files.}
         %
-        \item{gcContent}{\code{signature(object="Fastqq",i="numeric")}: Returns \code{integer} vector of length 100 which countains absolute read count numbers for each percentage of GC-content. \code{i} is the index of the fastq file for wich the values are returned.}
+        \item{gcContent}{\code{signature(object="Fastqq",i="numeric")}: Returns \code{integer} vector of length 100 which countains absolute read count numbers for each percentage of GC-content. \code{i} is the index of the fastq file for wich the values are returned. The GC content values for all files together can be obtained using \code{gcContentMatrix}.}
         %
         \item{nucFreq}{\code{signature(object="Fastqq",i="integer")}: Returns \code{matrix} which contains the absolute nucleotide count values for each nucleotide and read position. \code{i} is the index of the fastq file for wich the values are returned.}
         %
@@ -123,7 +123,7 @@ The following methods are defined for class \code{Fastqq}:
         %
         \item{phred}{\code{signature(object="Fastqq",i="integer")}: Returns a \code{matrix} with 93 rows and \code{maxSeqLen} columns. The matrix gived the absolute counts of each phred value for each sequence position. \code{i} is the index of the fastq file for wich the values are returned.}
         %
-        \item{phredQuantiles}{\code{signature(object="Fastqq", quantiles="numeric", i="integer")}: Returns a \code{data.frame}. The data.frame has one row for each given quantile and \code{maxSeqLen} columns. Each value gives the quantile (given by row name) of the phred values at the sequence position (given by column name). For the \code{quantiles} argument, a numeric vector with values in [0,1] must be given. For the \code{i} argument, a single integer value must be given which denotes the index of the fastq file from which values are returned (value must be in 1,...,nFiles).}
+        \item{phredQuantiles}{\code{signature(object="Fastqq", quantiles="numeric", i="integer")}: Returns a \code{data.frame}. The data.frame has one row for each given quantile and \code{maxSeqLen} columns. Each value gives the quantile (given by row name) of the phred values at the sequence position (given by column name). For the \code{quantiles} argument, a numeric vector with values in [0,1] must be given. For the \code{i} argument, a single integer value must be given which denotes the index of the fastq file from which values are returned (value must be in \{1,...,nFiles\}).}
         %
         \item{probeLabel}{\code{signature(object="Fastqq")}: Returns \code{character} vector which contains the \code{probeLabel} entries for given \code{Fastqq} object.}
     }

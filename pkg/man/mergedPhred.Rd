@@ -16,7 +16,7 @@
 mergedPhred functions: Retrieving and plotting of phred quantities from whole \code{Fastqq} objects.
 }
 \description{
-Retrieve position-wise tabulated mergedPhred values. Get position wise mergedPhred quantiles and plot mergedPhred quantile values}
+The \code{Fastqq} objects contain position-wise counted phred values. The \code{mergedPhred} function adds the counted values for all fastq files together into a single matrix. The matrix then again contains position-wise counted phred values. The \code{mergedPhredQuantiles} and \code{plotMergedPhredQuant} are analogues to the \code{phredQuantiles} and \code{plotPhredQuant} functions.}
 \usage{
 mergedPhred(object)
 mergedPhredQuantiles(object, quantiles)
@@ -41,7 +41,6 @@ Genome Research 1998 Vol. 8 No. 3 186-194
 \author{
 Wolfgang Kaisers
 }
-\note{The static size of the retured k-mer array is 4^k.}
 \examples{
 basedir<-system.file("extdata",package="seqTools")
 setwd(basedir)

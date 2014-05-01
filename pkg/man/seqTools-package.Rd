@@ -12,7 +12,7 @@ Analyze read length, phred scores and alphabeth frequency and DNA k-mers on unco
 \tabular{ll}{
 Package: \tab seqTools\cr
 Type: \tab Package\cr
-Version: \tab 0.1.6\cr
+Version: \tab 0.99.31\cr
 Date: \tab 2013-10-14\cr
 License: \tab GPL-2\cr
 Depends: \tab methods\cr

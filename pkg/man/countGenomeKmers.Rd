@@ -2,12 +2,12 @@
 \alias{countGenomeKmers}
 \title{countGenomeKmers: Counting K-mers in DNA sequences.}
 \description{
-Counts K-mers of DNA sequences inside fasta files. The k-mers are searched in a set of search windows, which are defined by \code{start} and \code{width} parameter. From each position of the search window, a DNA k-mer is identified on the right hand side on the given DNA sequence. Each value in the \code{start} vector defindes the left border of a search window. The size of the search window is given by the appropriate value in the \code{width} vector. }
+Counts K-mers of DNA sequences inside fasta files. The k-mers are searched in a set of search windows, which are defined by \code{start} and \code{width} parameter. From each position of the search window, a DNA k-mer is identified on the right hand side on the given DNA sequence. Each value in the \code{start} vector defindes the left border of a search window. The size of the search window is given by the appropriate value in the \code{width} vector. The function is intended to count DNA k-mers in selected regions (e.g. exons) on DNA chromosomes while respecting strand orientation.}
 \usage{
 countGenomeKmers(dna,seqid,start,width,strand,k)
 }
 \arguments{
-  \item{dna}{\code{character}. Vector of DNA sequences. \code{dna} must not contain other characters as "ATCGN". Capitalization does not matter.  When a 'N' character is found, the ongoing identification of a DNA k-mer is terminated.}
+  \item{dna}{\code{character}. Vector of DNA sequences. \code{dna} must not contain other characters as "ATCGN". Capitalization does not matter.  When a 'N' character is found, the current DNA k-mer is skipped.}
   \item{seqid}{\code{numeric}. Vector of (1-based) values describing the index of the analyzed sequences inside the fasta file.}
   \item{start}{\code{numeric}. Vector of (1-based) start positions for reading windows.}
   \item{width}{\code{numeric}. Vector of window width values.}

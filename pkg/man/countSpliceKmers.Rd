@@ -2,13 +2,13 @@
 \alias{countSpliceKmers}
 \title{countSpliceKmers: Counting K-mers on donor (5', upstream) sides (exonic) of splice sites.}
 \description{
-The function regards the given DNA sequences as collection of splice sites. The given \code{lEnd} and \code{rStart} positions act as (1-based) coordinates of the innermost exonic nucleotides. These nucleotides reside on exon-intron boundaries and have one exonic and one intronic adjacent nucleotide. The function counts \code{width} k-mers upstream on exonic DNA in reading direction (left -> right on + strand, right -> left on - strand). 
+The function regards the given string as DNA sequence bearing a collection of splice sites. The given \code{lEnd} and \code{rStart} positions act as (1-based) coordinates of the innermost exonic nucleotides. They reside on exon-intron boundaries and have one exonic and one intronic adjacent nucleotide. The function counts \code{width} k-mers upstream on exonic DNA in reading direction (left -> right on + strand, right -> left on - strand). 
 }
 \usage{
 countSpliceKmers(dna,seqid,lEnd,rStart,width,strand,k)
 }
 \arguments{
-  \item{dna}{\code{character}. Vector of DNA sequences. \code{dna} must not contain other characters as "ATCGN". Capitalization does not matter. When a 'N' character is found, the ongoing identification of a DNA k-mer is terminated.}
+  \item{dna}{\code{character}. Vector of DNA sequences. \code{dna} must not contain other characters as "ATCGN". Capitalization does not matter. When a 'N' character is found, the current DNA k-mer is skipped.}
   \item{seqid}{\code{numeric}. Vector of (1-based) values coding for one of the given sequences.}
   \item{lEnd}{\code{numeric}. Vector of (1-based) left-end positions. Will be used as rightmost window position. }
   \item{rStart}{\code{numeric}. Vector of (1-based) right-start positions. Will be used as leftmost window positions (over which(n-1) positions overhang will be counted as part of frame).}

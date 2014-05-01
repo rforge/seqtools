@@ -28,7 +28,7 @@ setwd(basedir)
 fq<-fastqq(c("g4_l101_n100.fq.gz","g5_l101_n100.fq.gz"),k=4,probeLabel=c("g4","g5"))
 fqm<-gcContentMatrix(fq)
 }
+\seealso{gcContent}
 \keyword{gcContentMatrix}
 \keyword{kmer}
 \keyword{fastqq}
-\keyword{Fastqq}
