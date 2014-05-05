@@ -290,7 +290,7 @@ setMethod("plotPhredQuant", "Fastqq", function(object, i, main, ...){
   if(missing(main))
     main <- paste("Position wise Phred Quantiles (", probeLabel(object)[i], ")", sep = "")
 
- plot(xv, xv, ylim = c(0, maxQ), type = "n", bty = "n", las = 1, ylab = "phred score", 
+ plot(xv, xv, ylim = c(0, maxQ), type = "n", bty = "n", las = 1, ylab = "Phred score", 
     xlab = "Sequence position", main = main, ...)    
      
   lines(xv, qq[1, ], col = cols[1], lty = 2)
@@ -461,7 +461,7 @@ setMethod("plotMergedPhredQuant", "Fastqq", function(object, main, ...){
   if(missing(main))
     main <- paste("Merged position wise Phred Quantiles.", sep = "")
   
-  plot(xv, xv, ylim = c(0, maxQ), type = "n", bty = "n", las = 1, ylab = "phred score", 
+  plot(xv, xv, ylim = c(0, maxQ), type = "n", bty = "n", las = 1, ylab = "Phred score", 
        xlab = "Sequence position", main = main, ...)    
   
   lines(xv, qq[1, ], col = cols[1], lty = 2)
