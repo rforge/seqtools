@@ -40,6 +40,7 @@ static const size_t rbuf_size=1024;		// Version for R_alloc
 # define tval 3
 # define nval 4
 # define zval 5
+# define lfcv 6		/* line feed */
 
 // ASCII:	A 65, C 67, G 71, T 84, a 97, c 99, g 103, t 116
 // Translation:	A->0, C->1, G->2, T->3
@@ -228,5 +229,30 @@ static const unsigned char IUPAC[256] = {
 	iuz,iuz,iuz,iuz,	iuz,iuz,iuz,iuz,	iuz,iuz,iuz,iuz,	iuz,iuz,iuz,iuz,	// 224
 	iuz,iuz,iuz,iuz,	iuz,iuz,iuz,iuz,	iuz,iuz,iuz,iuz,	iuz,iuz,iuz,iuz		// 240
 };
+
+static const unsigned char LFCR[256] = {
+	// 64 - block																					// start index
+	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,lfcv,zval,	zval,lfcv,zval,zval,	// 0
+	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	// 16
+	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	// 32
+	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	// 48
+
+	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	// 64
+	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	// 80
+	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	// 96
+	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	// 112
+
+	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	// 128
+	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	// 144
+	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	// 160
+	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	// 176
+
+	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	// 192
+	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	// 208
+	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	// 224
+	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval,	zval,zval,zval,zval		// 240
+};
+
+
 
 #endif /* STAT_DEFS_H_ */

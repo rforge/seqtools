@@ -80,7 +80,7 @@ int fatIsEof (faTraverse* fat)	{ return dasIsEof (fat->das); }
 int fatNewSeq(faTraverse *fat)  { return fat->state & fat_newSeq; }
 
 // Only purposed for use in top-level:
-// resets nucReady when set.
+// resets nucReady when called.
 int fatNucReady(faTraverse *fat)
 {
 	if(fat->state & fat_nucReady)
@@ -157,7 +157,7 @@ int fatCheckFill(faTraverse *fat)
 
 static R_INLINE int fat_checkNewLine(faTraverse *fat)
 {
-	if(*fat->das->r_iter==fat_char_lf)
+	if(LFCR[(unsigned)*fat->das->r_iter]==lfcv)
 	{
 		fat->state|=fat_loc;
 		return fat->state;
@@ -217,10 +217,9 @@ static R_INLINE int fat_check_nuc(faTraverse *fat)
 
 static R_INLINE int fat_skipNewLine(faTraverse *fat)
 {
-	// Skips LF ('\n') character and
+	// Skips LF ('\n', ASCII 10)  and CR (ASCII 13) character and
 	// eventually tries to fill array
-
-	if(*fat->das->r_iter==fat_char_lf)
+	if(LFCR[(unsigned)*fat->das->r_iter]==lfcv)
 	{
 		if(fatCheckFill(fat))
 			return fat->state;
@@ -238,7 +237,7 @@ static R_INLINE int fat_skipLine(faTraverse *fat)
 	// Traverses until first position of next line
 	// and eventually tries to refill array
 	daStream *das=fat->das;
-	while(*das->r_iter!=fat_char_lf)
+	while(LFCR[(unsigned)*fat->das->r_iter]==zval)
 	{
 		++das->r_iter;
 		if(fatCheckFill(fat))
@@ -491,14 +490,36 @@ int fat_procNuc(faTraverse *fat)
 			}
 			//printf("[proc Nuc] End while pos: '%s'\n",das->pos);
 		}
+
 		// Pos array is full
 		fat->state|=fat_nucReady;
 		fat->state&=(~fat_loc);
-		//printf("[fat_Transfer] return fat_ok\n");
-		return fat->state;
+		//printf("[proc Nuc] return fat_ok\n");
+		return fat_retProcNuc(fat);
+		//return fat->state;
+	}
+	else //if(fat_checkNewLine(fat))
+	{
+		//printf("[proc Nuc] AGCT->zval\n");
+		if(fat_checkNewLine(fat))
+			fat_skipNewLine(fat);
+
+			/*
+			if(fat_skipNewLine(fat))
+			{
+				printf("[proc Nuc] Newline skipped: '%s'\n",das->r_iter);
+			}
+			*/
+
+		//else
+		//	printf("[proc Nuc] Found ASCII %u\n",(unsigned char)(*fat->das->r_iter));
 	}
 
 	//printf("[proc Nuc] Return fat_loc: '%s'\n",das->r_iter);
+	//printf("[proc Nuc] das array len: %li\n",das->r_end-das->r_iter);
+	//printf("[proc Nuc] dasIsEof: %i\n",dasIsEof(das));
+	//sleep(10);
+
 	fat->state|=fat_loc;
 	//fat->state&=(~fat_nucReady);
 	return fat->state;
@@ -509,31 +530,37 @@ int fat_procNuc(faTraverse *fat)
 int fat_findKarray(faTraverse *fat)
 {
 	//fat->state&=(~fat_nucReady);
-	//printf("[find Kar] Start: '%s'\t%u\n",fat->das->r_iter,fatEmpty(fat));
+	//printf("[fat_findKarray] Start: '%s'\t%u\tstrlen: %lu\n",fat->das->r_iter,fatEmpty(fat),strlen(fat->das->r_iter));
 	if(!fatEmpty(fat))
 	{
 		if(fat_checkN(fat))
 		{
-			//printf("[find Kar] skipN.\n");
+			//printf("[fat_findKarray] skipN.\n");
 			fat_skipN(fat);
 		}
 		if(fat_checkNewSeq(fat))
 		{
-			//printf("[find Kar] New seq found.\n");
+			//printf("[fat_findKarray] New seq found.\n");
 			return fat->state;
 		}
 		if(fat_checkComment(fat))
 		{
 			fat_skipComment(fat);
-			//printf("[find Kar] post cmt: '%s'\n",fat->das->r_iter);
+			//printf("[fat_findKarray] post cmt: '%s'\n",fat->das->r_iter);
 		}
 		if(fat_procNuc(fat))
 		{
-			//printf("[find Kar] procNuc return state.\n");
+			//printf("[fat_findKarray] procNuc return state: %i\n",fat->state);
 			return fat->state;
 		}
+		/*
+		if(fat_checkNewLine(fat))
+		{
+			printf("[fat_findKarray] CheckNewLine!\n");
+		}
+		*/
 	}
-	//printf("[find Kar] '%s'\n",fat->das->r_iter);
+	//printf("[find Kar] Something else: '%s'\n",fat->das->r_iter);
 	return fat_ok;
 }
 

@@ -168,7 +168,7 @@ int das_fill(daStream *das)
 	}
 	// Return success
 	das->state&=(~das_empty);
-	//printf("[das_fill] after : count=%u\t'%s'\n",count,das->rfc);
+	//printf("[das_fill] after : count=%lu\t'%s'\n",count,das->rfc);
 	return das_ok;
 }
 

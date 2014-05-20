@@ -2816,7 +2816,10 @@ SEXP count_fasta_Kmers(SEXP pFasta, SEXP pK)
 	 * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	fat=r_do_init_fat(CHAR(STRING_ELT(pFasta,0)),k);
 	if(!fat)
+	{
+		UNPROTECT(nProtected);
 		return R_NilValue;
+	}
 	iCol=0;
 	array_offset=0;
 	if(fat_checkNewSeq(fat))
@@ -2825,6 +2828,7 @@ SEXP count_fasta_Kmers(SEXP pFasta, SEXP pK)
 		++iCol;
 		fat_skipSeqHeader(fat);
 	}
+	//Rprintf("[count_fasta_Kmers] Post initial fat_checkNewSeq das->r_iter: '%s'\n",fat->das->r_iter);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 * Traverse file and count DNA k-mers
@@ -2833,13 +2837,14 @@ SEXP count_fasta_Kmers(SEXP pFasta, SEXP pK)
 	{
 		if(fat_findKarray(fat))
 		{
+			//Rprintf("[count_fasta_Kmers] findKarray->fat_ok.\n");
 			if(fatNucReady(fat))
 			{
 				/* * * * * * * * * * * * * * * * * * * * * * * * * * *
 				 * Number of K-mer starting points
 				 * npos=fat->das->npPos-k+1;
 				 * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
+				//Rprintf("[count_fasta_Kmers] fatNucReady. array_offset: %u\tk=%i\tnpos: %i\npos:'%s'\n",array_offset,k,fat->das->npPos,fat->das->pos);
 				if(!do_countCheck_Kmers(fat->das->pos,array+array_offset,&nn,k,fat->das->npPos-k+1))
 					error("[count_fasta_Kmers] character mismatch!");
 			}

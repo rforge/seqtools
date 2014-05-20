@@ -115,6 +115,7 @@ static inline size_t dfs_read(dfStream *dfs, char *dest,unsigned size)
 		 * nchar<size: eof or error in both cases
 		 */
 		res=gzread(dfs->gz,dest,sizeof(char)*size);
+		//printf("[dfs_read] Read size: %i\n",res);
 		if(res<0)
 		{
 			dfs_stream_close(dfs);
