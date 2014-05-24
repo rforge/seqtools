@@ -7,7 +7,7 @@
 ##  Content   :   Doing some diagnostic and interventional tasks on fastq    ##
 ##                and fasta                                                  ##
 ##                esp. DNA k-mer counts.                                     ##
-##  Version   :   0.99.21                                                    ##
+##  Version   :   0.99.34                                                    ##
 ##                                                                           ##
 ##  Changelog :                                                              ##
 ##  26.08.13  :   0.0.1 Project created                                      ##
@@ -30,8 +30,10 @@
 ##  22.12.13  :   0.99.2 Added '['-operator for Fastqq class                 ##
 ##  19.01.14  :   0.99.7 Added zlib version control for correction of        ##
 ##                       gzBuffer                                            ##
-#                        error                                               ##
+##                       error                                               ##
 ##                        + checks: cran win-builder + valgrind              ##
+##  21.05.14  :   0.99.34 Corrected error in count_fasta_Kmers               ##
+##                        which freezed function                             ##
 ## + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ##
 
 .onUnload <- function(libpath) { library.dynam.unload("seqTools", libpath) }
@@ -97,7 +99,8 @@ fastqKmerSubsetLocs <- function(filenames, k = 4, kIndex)
   if(any(kIndex > (4^k)) )
     stop("'kIndex' out of range (>4^k).")
   
-  return(.Call("fastq_KmerSubset_locs", filenames, k, kIndex, PACKAGE = "seqTools"))
+  return(.Call("fastq_KmerSubset_locs", filenames, k, kIndex,
+                  PACKAGE = "seqTools"))
 }
 
 ## + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ##
@@ -110,11 +113,15 @@ fastqKmerSubsetLocs <- function(filenames, k = 4, kIndex)
 ## + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ##
 
 
-setMethod("fileNames", "Fastqq", function(object) {return(object@filenames)})
-setMethod("collectTime", "Fastqq", function(object) {return(object@collectTime)})
+setMethod("fileNames", "Fastqq", function(object)
+                            {return(object@filenames)})
+
+setMethod("collectTime", "Fastqq", function(object)
+                            {return(object@collectTime)})
 
 setMethod("collectDur", "Fastqq", function(object) {
-return(as.numeric(difftime(object@collectTime$end, object@collectTime$start, units = "secs")))
+return(as.numeric(difftime(object@collectTime$end, object@collectTime$start,
+                                                    units = "secs")))
 })
 
 setMethod("getK", "Fastqq", function(object) {return(object@k)})
@@ -213,13 +220,13 @@ setMethod("show", "Fastqq", function(object){
   bm <- Sys.localeconv()[7]
   w <- 20
   r <- "right"
-  cat("Class       : ", format(class(object), w = w, j = r)                              , "\n", sep = "")
-  cat("nFiles      : ", format(format(nFiles(object)         , big.m = bm), w = w, j = r)   , "\n", sep = "")
-  cat("maxSeqLen   : ", format(format(maxSeqLen(object)      , big.m = bm), w = w, j = r)   , "\n", sep = "")
-  cat("k (Kmer len): ", format(format(getK(object)           , big.m = bm), w = w, j = r)   , "\n", sep = "")
+  cat("Class       : ", format(class(object), w = w, j = r)                                  , "\n", sep = "")
+  cat("nFiles      : ", format(format(nFiles(object)         , big.m = bm), w = w, j = r)    , "\n", sep = "")
+  cat("maxSeqLen   : ", format(format(maxSeqLen(object)      , big.m = bm), w = w, j = r)    , "\n", sep = "")
+  cat("k (Kmer len): ", format(format(getK(object)           , big.m = bm), w = w, j = r)    , "\n", sep = "")
   cat("\n")
   cat("nReads      : ", format(format(sum(as.numeric(nReads(object)))    , big.m = bm), w = w, j = r)   , "\n", sep = "")
-  cat("nr  N   nuc : ", format(format(sum(nNnucs(object))    , big.m = bm), w = w, j = r)   , "\n", sep = "")
+  cat("nr  N   nuc : ", format(format(sum(nNnucs(object))    , big.m = bm), w = w, j = r)    , "\n", sep = "")
   cat("Min seq len : ", format(format(min(seqLen(object)[1, ]), big.m = bm), w = w, j = r)   , "\n", sep = "")
   cat("Max seq len : ", format(format(max(seqLen(object)[2, ]), big.m = bm), w = w, j = r)   , "\n", sep = "")
   return(invisible())
@@ -345,17 +352,24 @@ setMethod("plotPhredDist", "Fastqq", function(object, i, maxp = 45, col, ...)
     col <- topo.colors(10)[3]
   
   phred <- phredDist(object, i)
-  maxy <- ceiling(max(phred)*5)/5
+  maxy <- ceiling(max(phred) * 5) / 5
   x <- 1:maxp
   xmax <- 10*(ceiling(maxp/10))
-  plot(x, phred[x], ylim = c(0, maxy), xlim = c(0, xmax), type = "l", lwd = 2, col = col, yaxt = "n", bty = "n", 
-        xlab = "Phred value", ylab = "Content (%)", ...)
-  ylb <- 0:(10*maxy)/10
+  
+  plot(x, phred[x], ylim = c(0, maxy), xlim = c(0, xmax), type = "l", lwd = 2,
+       col = col, yaxt = "n", bty = "n", xlab = "Phred value",
+       ylab = "Content (%)", ...)
+  
+  ylb <- 0:(10 * maxy) / 10
   axis(side = 2, at = ylb, labels = 100*ylb, las = 1)
   return(invisible())
 })
+
+
+# + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
 # Not exported:
-pd_l10 <- function(x){ x <- phredDist(x); return(sum(x[1:10])/sum(x))}
+# + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
+pd_l10 <- function(x){ x <- phredDist(x); return(sum(x[1:10]) / sum(x))}
 
 
 setMethod("propPhred","Fastqq",function(object, greater = 30, less = 93)
@@ -400,10 +414,14 @@ setMethod("mergedPhred", "Fastqq", function(object){
   sql <- seqLen(object)
   maxSeqLen <- max(sql[2, ])
   
-  # as.numeric: Sum on integer is likely to exceed maximal 32-bit integer  values
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
+  # as.numeric: Sum on integer is likely to exceed 
+  #             maximal 32-bit integer  values
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   if(sql[2, 1] < maxSeqLen)
   {
-    mp <- as.numeric(.Call("r_enlarge_int_mat", object@phred[[1]], c(nrow(object@phred[[1]]), maxSeqLen), PACKAGE = "seqTools"))
+    mp <- as.numeric(.Call("r_enlarge_int_mat", object@phred[[1]], 
+                  c(nrow(object@phred[[1]]), maxSeqLen), PACKAGE = "seqTools"))
   }else{
     mp <- as.numeric(object@phred[[1]])
   }
@@ -416,7 +434,8 @@ setMethod("mergedPhred", "Fastqq", function(object){
     {
       if(sql[2, i] <  maxSeqLen)  
       {
-        mp <- mp+as.numeric(.Call("r_enlarge_int_mat", object@phred[[i]], c(nrow(object@phred[[i]]), maxSeqLen), PACKAGE = "seqTools"))
+        mp <- mp+as.numeric(.Call("r_enlarge_int_mat", object@phred[[i]],
+                  c(nrow(object@phred[[i]]), maxSeqLen), PACKAGE = "seqTools"))
       }else{
         mp <- mp+as.numeric(object@phred[[i]])
       }
@@ -436,16 +455,21 @@ setMethod("mergedPhredQuantiles", "Fastqq", function(object, quantiles){
   sql <- seqLen(object)
   maxSeqLen <- max(sql[2, ])
   
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   # Count qual values for each sequence position
   # Convert counts into column-wise relative values
   # Maximum counted read length
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   vec <- 1:maxSeqLen
   mrg <- mergedPhred(object)
   qrel <- as.data.frame(apply(mrg[, vec], 2, rel_real))
   names(qrel)
   names(qrel) <- vec
+  
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   # Walk through each column and extract row number
   # for given quantile values
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   res <- .Call("get_column_quantiles", quantiles, qrel, PACKAGE = "seqTools")
   return(res)
 })
@@ -461,8 +485,8 @@ setMethod("plotMergedPhredQuant", "Fastqq", function(object, main, ...){
   if(missing(main))
     main <- paste("Merged position wise Phred Quantiles.", sep = "")
   
-  plot(xv, xv, ylim = c(0, maxQ), type = "n", bty = "n", las = 1, ylab = "Phred score", 
-       xlab = "Sequence position", main = main, ...)    
+  plot(xv, xv, ylim = c(0, maxQ), type = "n", bty = "n", las = 1,
+       ylab = "Phred score", xlab = "Sequence position", main = main, ...)
   
   lines(xv, qq[1, ], col = cols[1], lty = 2)
   lines(xv, qq[2, ], col = cols[2], lty = 1)
@@ -519,9 +543,12 @@ setMethod("plotNucFreq", "Fastqq", function(object, i, main, maxx, ...){
   cols <- c("#1F78B4", "#33A02C", "#E31A1C", "#FF7F00")
   
   if(missing(main))
-    main <- paste("Position wise Nucleotide frequency (", probeLabel(object)[i], ")", sep = "")
-  plot(x, x, ylim = c(0, maxY), type = "n", bty = "n", las = 1, ylab = "Nucleotide fequency", 
-       xlab = "sequence position", main = main, ...)
+    main <- paste("Position wise Nucleotide frequency (",
+                      probeLabel(object)[i], ")", sep = "")
+  
+  plot(x, x, ylim = c(0, maxY), type = "n", bty = "n", las = 1,
+       ylab = "Nucleotide fequency", xlab = "sequence position",
+       main = main, ...)
  
   lines(x, nacrel[1, ], col = cols[1], lwd = 2)
   lines(x, nacrel[2, ], col = cols[2], lwd = 2)
@@ -540,7 +567,9 @@ setMethod("plotGCcontent", "Fastqq", function(object,main,...)
   cols <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99", 
           "#E31A1C", "#FDBF6F", "#FF7F00", "#CAB2D6", "#6A3D9A")
   
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   # Normalize matrix to colsum = 1
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   gc <- apply(object@gcContent, 2, rel_int)
   maxY = round(1.3*max(gc), 2)
   nf <- nFiles(object)
@@ -548,11 +577,17 @@ setMethod("plotGCcontent", "Fastqq", function(object,main,...)
   
   if(missing(main))
     main<-"GC content"
-  plot(x, x, ylim = c(0, maxY), type = "n", bty = "n", las = 1, ylab = "Proportion of reads (%)", xlab = "Relative GC content (%)", 
+  
+  plot(x, x, ylim = c(0, maxY), type = "n", bty = "n", las = 1,
+       ylab = "Proportion of reads (%)", xlab = "Relative GC content (%)", 
        main = main, ...) 
+  
   for(i in 1:nf)
     lines(x, gc[, i], col = cols[i], lwd = 2)
-  legend("right", lwd = 2, col = cols, legend = probeLabel(object), bty = "n", cex = 0.8)
+  
+  legend("right", lwd = 2, col = cols, legend = probeLabel(object),
+                                                bty = "n", cex = 0.8)
+  
   return(invisible())
 })
 
@@ -585,7 +620,10 @@ setMethod("plotNucCount", "Fastqq", function(object, nucs = 16, maxx, ...){
   fvec <- 1:n
   
   i <- 1
+  
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   # Skip extra line
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   x <- 1:maxx
   nac <- object@nac[[i]][, x]
   nacrel <- apply(nac, 2, rel_int)
@@ -616,8 +654,10 @@ setMethod("plotNucCount", "Fastqq", function(object, nucs = 16, maxx, ...){
   
   nv <- paste(iupac_chars[nucs], collapse = "")
   
-  plot(x, x, ylim = c(0, maxY), type = "n", bty = "n", las = 1, ylab = "Nucleotide fequency", 
-     xlab = "sequence position", main = paste("Position wise Nucleotide frequency:  '", nv, "'", sep = ""))
+  plot(x, x, ylim = c(0, maxY), type = "n", bty = "n", las = 1,
+       ylab = "Nucleotide fequency", xlab = "sequence position",
+       main = paste("Position wise Nucleotide frequency:  '",
+                                            nv, "'", sep = ""))
   
   for(i in fvec)
     lines(x, dfr[, i], col = cols[i%%10], lwd = 2)
@@ -634,7 +674,8 @@ setMethod("plotNucCount", "Fastqq", function(object, nucs = 16, maxx, ...){
 
 
 
-setMethod("plotKmerCount", "Fastqq", function(object, index, mxey, main = "K-mer count", ...){
+setMethod("plotKmerCount", "Fastqq", function(object, index, mxey, 
+                                                  main = "K-mer count", ...){
   n <- nFiles(object)  
   if(missing(index))
   {
@@ -671,16 +712,19 @@ setMethod("plotKmerCount", "Fastqq", function(object, index, mxey, main = "K-mer
     maxY <- 2^lg2y     
 
     
-    plot(x, x, ylim = c(0, maxY), type = "n", bty = "n", las = 1, ylab = "K-mer count", xlab = "K-mer index", 
-         main = main, axes = FALSE, ...)  
+    plot(x, x, ylim = c(0, maxY), type = "n", bty = "n", las = 1,
+         ylab = "K-mer count", xlab = "K-mer index", main = main,
+                                                axes = FALSE, ...)
+    
     for(i in index)
       lines(x, object@kmer[, i], col = cols[i], lwd = 2)    
   }
   else
   {
     x <- 1:(4^pk)
-    melt_factor <- as.integer(4^(object@k-pk))
-    y_factor <- max(.Call("melt_vector", object@kmer[, 1], melt_factor, PACKAGE = "seqTools"))/max(object@kmer[, 1])
+    melt_factor <- as.integer( 4^(object@k - pk) )
+    y_factor <- max(.Call("melt_vector", object@kmer[, 1], melt_factor,
+                              PACKAGE = "seqTools"))/max(object@kmer[, 1])
     
     if(missing(mxey))
       lg2y <- floor(log2(1.2*(max(object@kmer))*y_factor))
@@ -688,16 +732,24 @@ setMethod("plotKmerCount", "Fastqq", function(object, index, mxey, main = "K-mer
       lg2y <- mxey
     maxY <- 2^lg2y
     
-    plot(x, x, ylim = c(0, maxY), type = "n", bty = "n", las = 1, ylab = "K-mer count", xlab = "K-mer index", 
-       main = main, axes = FALSE, ...)
+    plot(x, x, ylim = c(0, maxY), type = "n", bty = "n", las = 1, 
+                      ylab = "K-mer count", xlab = "K-mer index", 
+                                  main = main, axes = FALSE, ...)
+    
     for(i in index)
     {
-      lines(x, .Call("melt_vector", object@kmer[, i], melt_factor, PACKAGE = "seqTools"), col = cols[i], lwd = 2)
+      lines(x, .Call("melt_vector", object@kmer[, i], melt_factor,
+                          PACKAGE = "seqTools"), col = cols[i], lwd = 2)
     }
   }
-  axis(side = 1, at = 0:4*4^(pk-1), labels = c("A", "C", "G", "T", ""))
-  axis(side = 2, at = c(0, maxY), labels = c(0, paste("2^", lg2y, sep = "")), las = 1)  
-  legend("right", lwd = 2, col = cols[index], legend = probeLabel(object)[index], bty = "n", cex = 0.8)
+  axis(side = 1, at = 0:4 * 4^(pk - 1), labels = c("A", "C", "G", "T", ""))
+  
+  axis(side = 2, at = c(0, maxY),
+                      labels = c(0, paste("2^", lg2y, sep = "")), las = 1)
+  
+  legend("right", lwd = 2, col = cols[index], 
+                  legend = probeLabel(object)[index], bty = "n", cex = 0.8)
+  
   return(invisible())
 })
 
@@ -741,49 +793,80 @@ setMethod("mergeFastqq", "Fastqq", function(lhs, rhs){
   {
     message("[mergeFastqq] Resizing rhs.")
     msl <- lhs@maxSeqLen
+    
+    # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
     # nac
+    # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
     new_dim <- as.integer(c(nrow(rhs@nac), msl))
     rhs_nac <- .Call("r_enlarge_int_mat", rhs@nac, new_dim, PACKAGE = "seqTools")
     res@nac <- c(lhs@nac, rhs_nac)
     # seqLenCount
     new_dim <- as.integer(c(msl, rhs@nFiles))
-    rhs_seqLenCount <- .Call("r_enlarge_int_mat", rhs@seqLenCount, new_dim, PACKAGE = "seqTools")
+    rhs_seqLenCount <- .Call("r_enlarge_int_mat", rhs@seqLenCount, new_dim,
+                                                            PACKAGE = "seqTools")
+    
     res@seqLenCount <- c(lhs@seqLenCount, rhs_seqLenCount)
+    
+    # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
     # phred
+    # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
     new_dim <- as.integer(nrow(rhs@phred), msl)
     rhs_phred_list <- list()
     for(i in 1:nFiles(rhs))
-      rhs_phred_list[[i]] <- .Call("r_enlarge_int_mat", rhs@phred[[i]], new_dim, PACKAGE = "seqTools")
+      rhs_phred_list[[i]] <- .Call("r_enlarge_int_mat", rhs@phred[[i]],
+                                          new_dim, PACKAGE = "seqTools")
+    
     res@phred <- c(lhs@phred, rhs_phred_list)
     res@maxSeqLen <- lhs@maxSeqLen
+    # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
+    
    } else if(rhs@maxSeqLen>lhs@maxSeqLen) {
     
     message("[mergeFastqq] Resizing lhs.")
     msl <- rhs@maxSeqLen
+    
+    # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
     # nac
+    # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
     new_dim <- as.integer(c(nrow(lhs@nac), msl))
-    lhs_nac <- .Call("r_enlarge_int_mat", lhs@nac, new_dim, PACKAGE = "seqTools")
+    lhs_nac <- .Call("r_enlarge_int_mat", lhs@nac, new_dim,
+                                                  PACKAGE = "seqTools")
     res@nac <- c(rhs@nac, lhs_nac)
+    
+    # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
     # seqLenCount
+    # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
     new_dim <- as.integer(c(msl, lhs@nFiles))
-    lhs_seqLenCount <- .Call("r_enlarge_int_mat", lhs@seqLenCount, new_dim, PACKAGE = "seqTools")
+    lhs_seqLenCount <- .Call("r_enlarge_int_mat", lhs@seqLenCount,
+                                          new_dim, PACKAGE = "seqTools")
     res@seqLenCount <- c(rhs@seqLenCount, lhs_seqLenCount)
+    
+    # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
     # phred
+    # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
     new_dim <- as.integer(nrow(lhs@phred), msl)
     lhs_phred_list <- list()
     for(i in 1:nFiles(lhs))
       lhs_phred_list[[i]] <- .Call("r_enlarge_int_mat", lhs@phred[[i]], new_dim, PACKAGE = "seqTools")
     res@phred <- c(rhs@phred, lhs_phred_list)
     res@maxSeqLen <- rhs@maxSeqLen
-   } else { # rhs@maxSeqLen == lhs@maxSeqLen
+    # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
+    
+   } else { 
+    
+    # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
+    # rhs@maxSeqLen == lhs@maxSeqLen
+    # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
     res@maxSeqLen = lhs@maxSeqLen
     res@nac <- c(lhs@nac, rhs@nac)
     res@phred <- c(lhs@phred, rhs@phred)
+    # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
+    
    }
   
-  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   # Eventually melt down k-mer count matrix when lhs and rhs have different k
-  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   res@k <- pmin(lhs@k, rhs@k)
   
   kml <- kmerCount(lhs)
@@ -815,6 +898,8 @@ setMethod("mergeFastqq", "Fastqq", function(lhs, rhs){
 
 
 setMethod("meltDownK", "Fastqq", function(object, newK){
+  
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   if(!is.numeric(newK))
     stop("'newK' must be numeric")
   newK <- as.integer(newK)
@@ -823,7 +908,7 @@ setMethod("meltDownK", "Fastqq", function(object, newK){
   if(newK < 1 || newK >=  getK(object))
     stop("'newK' must be >= 1 and <= ", getK(object), ".")
   
-  
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   res <- new("Fastqq")
   res@filenames <- object@filenames
   res@nFiles <- object@nFiles
@@ -834,6 +919,7 @@ setMethod("meltDownK", "Fastqq", function(object, newK){
   
   res@firstKmer <- .Call("melt_kmer_matrix", object@firstKmer,
                     c(getK(object), newK), PACKAGE = "seqTools")
+  
   res@nReads <- object@nReads
   res@nN <- object@nN
   res@seqLenCount <- object@seqLenCount
@@ -841,18 +927,24 @@ setMethod("meltDownK", "Fastqq", function(object, newK){
   res@nac <- object@nac
   res@phred <- object@phred
   res@seqLen <- object@seqLen
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
+  
   return(res)
 })
 
+
 listMelt <- function(x, oldK, newK) {
-  f <- function(x) .Call("melt_kmer_matrix", x, as.integer(c(oldK, newK)),
-                         PACKAGE = "seqTools")
+  f <- function(x) .Call("melt_kmer_matrix", x, 
+                          as.integer(c(oldK, newK)), PACKAGE = "seqTools")
   
   return(lapply(x, f))
 }
 
 
+
 setMethod("[", "Fastqq", function(x, i, j, drop = "missing"){
+  
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   res <- new("Fastqq")
   res@filenames <- x@filenames[i]
   res@probeLabel <- x@probeLabel[i]
@@ -869,6 +961,8 @@ setMethod("[", "Fastqq", function(x, i, j, drop = "missing"){
   res@phred <- x@phred[i]
   res@nReads <- x@nReads[i]
   res@collectTime <- x@collectTime
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
+  
   return(res)
 })
 
@@ -883,17 +977,22 @@ setMethod("cbDistMatrix", "Fastqq", function(object,
   if(!is.numeric(nReadNorm))
     stop("'nReadNorm' must be numeric.")
   nReadNorm <- as.integer(nReadNorm)
-  if(nReadNorm<max(nReads(object)))
+  if(nReadNorm < max(nReads(object)))
     stop("'nReadNorm' must be greater than all nRead.")
   
-  # Column-wise normalizing read counts (by upscaling) so that column sums
-  # become nearly equal in order to compensate
-  # sequencing depth artifacts in Canberra distance values
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
+  # Column-wise normalizing read counts (by upscaling) 
+  # so that column sums become nearly equal in order to
+  # compensate sequencing depth artifacts in 
+  # Canberra distance values
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   scale <- nReadNorm/nReads(object)
   scaled <- .Call("scale_kmer_matrix", kmerCount(object), scale,
                   PACKAGE = "seqTools")
   
   colnames(scaled) <- object@probeLabel
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
+  
   return(.Call("cb_distance_matrix", scaled, PACKAGE = "seqTools"))
 })
 

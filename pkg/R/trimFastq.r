@@ -4,8 +4,7 @@
 ##  Project   :   seqTools                                                   ##
 ##  Created   :   26.August.2013                                             ##
 ##  Author    :   W. Kaisers                                                 ##
-##  Version   :   0.9.0                                                      ##
-##  File      :   file_output_functions.r                                    ##
+##  File      :   trimFastq.r                                                ##
 ##  Content   :   Functions which work on fastq and fastq and write output   ##
 ##                files: trimFastq, writeFai                                 ##
 ##                                                                           ##
@@ -113,4 +112,6 @@ trimFastq<-function(infile, outfile = "keep.fq.gz", discard = "disc.fq.gz", qual
   return(invisible(res))
 }
 
-
+## + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ##
+## END OF FILE
+## + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ##

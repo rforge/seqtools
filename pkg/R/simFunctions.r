@@ -58,12 +58,12 @@ writeSimFastq<-function(k = 6, nk = 5, nSeq = 10, filename = "sim.fq.gz")
   # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   # Do the work
   # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
-  bm<-Sys.localeconv()[7]
-  val<-as.integer(c(k,nk,nSeq))
-  pseq<-.Call("sim_dna_k_mer",val,PACKAGE="seqTools")
-  res<-.Call("gzwrite_fastq_dna",val,pseq,filename,PACKAGE="seqTools")
-  message("[writeSimFastq] file '",basename(filename),"': ",
-          format(res,big.mark=bm)," Bytes written.")
+  bm <- Sys.localeconv()[7]
+  val <- as.integer(c(k, nk, nSeq))
+  pseq <- .Call("sim_dna_k_mer", val, PACKAGE = "seqTools")
+  res <- .Call("gzwrite_fastq_dna", val, pseq, filename, PACKAGE = "seqTools")
+  message("[writeSimFastq] file '", basename(filename), "': ",
+          format(res,big.mark=bm), " Bytes written.")
   
   # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   # Terminate function.
@@ -137,7 +137,7 @@ writeSimContFastq<-function(k = 6, nk = 5, nSeq = 10, pos = 1,
   # writeSimContFastq should take 1-based k-indices
   # while "set_dna_k_mer" takes  0-based k-indices
   # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
-  kIndex<-kIndex-1L
+  kIndex <- kIndex-1L
   
   # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   # nContam: Deterministic replacements are copied
@@ -160,13 +160,21 @@ writeSimContFastq<-function(k = 6, nk = 5, nSeq = 10, pos = 1,
   # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   # Do the work
   # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
-  bm<-Sys.localeconv()[7]
-  val<-as.integer(c(k,nk,nSeq))
-  pseq<-.Call("sim_dna_k_mer",val,PACKAGE="seqTools")
-  prseq<-.Call("set_dna_k_mer",val,pseq,pos,kIndex,nContam,PACKAGE="seqTools")
-  res<-.Call("gzwrite_fastq_dna",val,prseq,filename,PACKAGE="seqTools")
-  message("[writeSimContFastq] file '",basename(filename),"': ",
-          format(res,big.mark=bm)," Bytes written.")
+  bm <- Sys.localeconv()[7]
+  
+  val <- as.integer(c(k, nk, nSeq))
+  
+  pseq <- .Call("sim_dna_k_mer", val, PACKAGE = "seqTools")
+  
+  prseq <- .Call("set_dna_k_mer", val, pseq,pos, kIndex,
+                 nContam, PACKAGE = "seqTools")
+  
+  res <- .Call("gzwrite_fastq_dna", val, prseq, filename,
+               PACKAGE = "seqTools")
+  
+  message("[writeSimContFastq] file '", basename(filename), 
+            "': ", format(res,big.mark=bm), 
+            " Bytes written.")
   
   # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   # Terminate function
@@ -176,61 +184,72 @@ writeSimContFastq<-function(k = 6, nk = 5, nSeq = 10, pos = 1,
 
 
 
-simFastqqRunTimes<-function(k,nSeq,filedir=".")
+simFastqqRunTimes<-function(k, nSeq, filedir = ".")
 {
   if(missing(k))
-    k<-2:(max_k)
+    k <- 2:(max_k)
   else
   {
     if(!is.numeric(k))
       stop("'k' must be numeric.")
-    k<-sort(unique(as.integer(k)))
+    k <- sort(unique(as.integer(k)))
     
     if(any(k < 1) || any(k > max_k))
       stop("'k' out of range.")
   }
   
   if(missing(nSeq))
-    nSeq<-as.integer(c(1e2,1e3,1e4,1e5,1e6,1e7))
+    nSeq <- as.integer(c(1e2, 1e3, 1e4, 1e5, 1e6, 1e7))
   else {
     if(!is.numeric(nSeq))
       stop("'nSeq' must be numeric.")
-    nSeq<-as.integer(nSeq)
+    nSeq <- as.integer(nSeq)
     if(any(nSeq < 1) )
       stop("'nSeq' must be positive.")
   }
   
   if(!is.character(filedir))
     stop("'filedir' must be character.")
+  
   if(!file.exists(filedir))
   {
     if(!dir.create(filedir))
       stop("Cannot create filedir '",filedir,"'.")
   }
   
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
+  # Write simulated fastq files
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   message("[simFastqqRunTimes] Creating fastq files:")
-  fqFiles<-character(length(nSeq))
-  bm<-Sys.localeconv()[7]  
+  fqFiles <- character(length(nSeq))
+  bm <- Sys.localeconv()[7]
+  
   for(j in 1:length(nSeq))
   {
-    fqFiles[j]<-file.path(filedir, paste("sfqrt_nSeq", nSeq[j], ".fq.gz", sep=""))
-    message("[simFastqqRunTimes] (",format(j , w = 3),"/", length(nSeq),") nSeq=",
-            format(nSeq[j], big.mark = bm, w = 12))
+    fqFiles[j] <- file.path(filedir,
+                paste("sfqrt_nSeq", nSeq[j], ".fq.gz", sep=""))
+    
+    message("[simFastqqRunTimes] (",format(j , w = 3),"/", length(nSeq),
+            ") nSeq=", format(nSeq[j], big.mark = bm, w = 12))
+    
     # Allways equal sized reads: k=6, read length=102
     writeSimFastq(k = 6, nk = 17, nSeq = nSeq[j], filename = fqFiles[j])    
   }
   
-  # Display options
-  nSim<-length(k) * length(nSeq)
-  m<-1
-  res<-data.frame(id = 1:nSim, k = 0, nSeq = 0, runtime = 0)  
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
+  # Prepare result table
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
+  nSim <- length(k) * length(nSeq)
+  m <- 1
+  res<-data.frame(id = 1:nSim, k = 0, nSeq = 0, runtime = 0)
+  
   for(i in 1:length(k))
   {
     for(j in 1:length(nSeq))
     {
-      message("[simFastqqRunTimes] (",format(m, w = 3),"/",nSim,
+      message("[simFastqqRunTimes] (", format(m, w = 3),"/", nSim,
               ") Fastqq run.")
-      fq <- fastqq(fqFiles[j],k = k[i])
+      fq <- fastqq(fqFiles[j], k = k[i])
       res$k[m] <- k[i]
       res$nSeq[m] <- nSeq[j]
       res$runtime[m] <- collectDur(fq)

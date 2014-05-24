@@ -4,7 +4,7 @@
 kMerIndex function: Returns array index for given DNA k-mers.
 }
 \description{
-For each k, there exist $4^k$ DNA k-mers. Many functions inside this package return values where DNA k-mers appear as array indices. This function shall allows extraction of count values for special k-mers by provision of index values.
+For each k, there exist $4^k$ DNA k-mers. Many functions inside this package return values where DNA k-mers appear as array indices. \code{kMerIndex} can be used for extraction of count values for special k-mers by provision of index values.
 }
 \usage{
 kMerIndex(kMers, k=nchar(kMers)[1], base = 1)

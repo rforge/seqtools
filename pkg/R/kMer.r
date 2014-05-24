@@ -35,10 +35,10 @@ countDnaKmers <- function(dna, k, start=1, width=nchar(dna) - k + 1)
   if(k > max_k)
     stop("'k' must not exceed", max_k, ".")
   
-  nc<-nchar(dna)
-  if(k>nc)
+  nc <- nchar(dna)
+  if(k > nc)
     stop("'k' must be <= nchar(dna).")
-  if(any(start+width+k>nc+2))
+  if(any(start + width + k > nc + 2))
     stop("Search region exceeds string end.")
   
   
@@ -72,8 +72,10 @@ revCountDnaKmers <- function(dna, k, start, width)
   if(any(width + k > start))
     stop("'width' must be <=  'start' - 'k'.")
   
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   # nn contains N counts
   # ToDo: Add value of nn to returned object
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   nn <- integer(length(start))
   return(.Call("rev_count_dna_Kmers", dna, start, width, k, nn,
                PACKAGE = "seqTools"))
@@ -81,7 +83,7 @@ revCountDnaKmers <- function(dna, k, start, width)
 
 ## + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ##
 ## Counts DNA k-mers on specified regions inside multiple (character) sequences
-##  in possibly reversed direction (depending on strand)
+## in possibly reversed direction (depending on strand)
 ## + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ##
 countGenomeKmers <- function(dna, seqid, start, width, strand, k)
 {
@@ -119,16 +121,17 @@ countGenomeKmers <- function(dna, seqid, start, width, strand, k)
   if(!is.numeric(k))
     stop("'k' must be numeric.")
   k<-as.integer(k)  
-  if(k<=0)
+  if(k <= 0)
     stop("'k' must be >=1")
 
-  if(k>max_k)
+  if(k > max_k)
     stop("'k' must not exceed", max_k, ".")
   
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   # Counts N's
   # ToDo: Return value
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   nn <- integer(length(start))
-  
   return(.Call("count_genome_Kmers", dna, seqid, start, width, 
                strand, k, nn, PACKAGE = "seqTools")) 
 }
@@ -185,17 +188,20 @@ countSpliceKmers <- function(dna, seqid, lEnd, rStart, width, strand, k)
   if(k > max_k)
     stop("'k' must not exceed", max_k, ".")
   
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   # Plus strand
-  plus_strand<-strand==1
-  if(sum(plus_strand)>0)
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
+  plus_strand<-strand == 1
+  if(sum(plus_strand) > 0)
   {
-    if(any((lEnd[plus_strand]-width[plus_strand]-k+1)<0))
+    if(any((lEnd[plus_strand] - width[plus_strand] - k + 1) < 0))
       stop("lEnd must be >= width+k-1 for all +-strand coordinates")
   }
   
-  
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   # Counts N's
   # ToDo: Return value
+  # + + + + + + + + + + + + + + + + + + + + + + + + + + + + #
   nn <- integer(length = nStart)
   
   return(.Call("count_splice_Kmers", dna, seqid, lEnd, rStart, width, 

@@ -37,7 +37,6 @@ countFastaKmers <- function(filenames, k = 4)
   if( (k < 0) || (k > max_k) )  
     stop("k must be in range 0,  ... , ", max_k, ".")
   
-  #SEXP count_fasta_Kmers(SEXP pFasta,  SEXP pK);
   res <- .Call("count_fasta_Kmers", filenames, k, PACKAGE = "seqTools")
   return(res)
 }

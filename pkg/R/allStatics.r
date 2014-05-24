@@ -36,7 +36,7 @@ max_k <- 12
 ## Some useful functions for work with phred's
 ## + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ##
 char2ascii <- function(c){ strtoi(charToRaw(c), base = 16L) }
-ascii2char <- function(x,multiple = FALSE){ rawToChar(as.raw(x), 
+ascii2char <- function(x, multiple = FALSE){ rawToChar(as.raw(x), 
                                   multiple = multiple) }
 
 phredTable <- function(phred = 0:93) {
@@ -48,7 +48,7 @@ phredTable <- function(phred = 0:93) {
   
   ascii <- phred + 33
   return(data.frame(ascii = ascii, phred = phred,
-                    char = ascii2char(ascii,multiple=TRUE)))
+                    char = ascii2char(ascii, multiple=TRUE)))
 }
 ## + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ##
 
